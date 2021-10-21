@@ -241,6 +241,18 @@ import StoreKit
                                 underlyingError: error)
     }
 
+    /**
+     * Constructs an Error with the ``ErrorCode/beginRefundRequestError`` code.
+     *
+     * - Note: This error is used when there is a problem related to the system info.
+     */
+    @objc static func beginRefundRequestError(withMessage: String, error: Error? = nil) -> Error {
+        let errorCode = ErrorCode.beginRefundRequestError
+        return ErrorUtils.error(with: errorCode,
+                                message: withMessage,
+                                underlyingError: error)
+    }
+
 }
 
 private extension SKError {
