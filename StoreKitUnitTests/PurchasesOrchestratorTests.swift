@@ -219,10 +219,10 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         expect(receivedError).to(matchError(ErrorCode.customerInfoError))
     }
 
-    @available(iOS 15.0, *)
-    @available(macCatalyst 15.0, *)
+    @available(iOS 15.0, macCatalyst 15.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
+    @available(macOS, unavailable)
     func testBeginRefundRequestCallsCompletionWithoutErrorAndPassesThroughStatusIfSuccessful() {
         var receivedError: Error?
         var receivedStatus: RefundRequestStatus?
@@ -241,10 +241,10 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         expect(receivedError).to(beNil())
     }
 
-    @available(iOS 15.0, *)
-    @available(macCatalyst 15.0, *)
+    @available(iOS 15.0, macCatalyst 15.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
+    @available(macOS, unavailable)
     func testBeginRefundRequestCallsCompletionWithErrorIfThereIsAFailure() {
         let expectedError = ErrorUtils.beginRefundRequestError(withMessage: "test")
         mockBeginRefundRequestHelper.mockError = expectedError
