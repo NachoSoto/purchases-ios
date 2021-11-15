@@ -1,0 +1,49 @@
+{
+  "identifier" : "BED4688A",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "5943E3F2",
+      "localizations" : [
+
+      ],
+      "name" : "com.nachosoto.magic-weather-swift-ui.pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6A893FDA",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro",
+              "displayName" : "Pro Weekly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.nachosoto.magic_weather_swift_ui.pro.weekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Pro weekly",
+          "subscriptionGroupID" : "5943E3F2",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}
