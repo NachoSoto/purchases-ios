@@ -229,6 +229,18 @@ public extension Purchases {
         fatalError()
     }
 
+    /**
+     * Deprecated
+     */
+    @available(iOS, obsoleted: 1, message: "Configure behavior through the RevenueCat dashboard instead")
+    @available(tvOS, obsoleted: 1, message: "Configure behavior through the RevenueCat dashboard instead")
+    @available(watchOS, obsoleted: 1, message: "Configure behavior through the RevenueCat dashboard instead")
+    @available(macOS, obsoleted: 1, message: "Configure behavior through the RevenueCat dashboard instead")
+    @objc var allowSharingAppStoreAccount: Bool {
+        get { fatalError() }
+        // swiftlint:disable:next unused_setter_value
+        set { fatalError() }
+    }
 }
 
 @available(iOS, obsoleted: 1, renamed: "CustomerInfo")

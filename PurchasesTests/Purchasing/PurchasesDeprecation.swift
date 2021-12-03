@@ -17,8 +17,6 @@ import RevenueCat
 // Protocol that enables us to call deprecated methods without triggering warnings.
 public protocol PurchasesDeprecatable {
 
-    var allowSharingAppStoreAccount: Bool { get set }
-
     static func addAttributionData(_ data: [String: Any], fromNetwork network: AttributionNetwork)
     static func addAttributionData(_ data: [String: Any],
                                    from network: AttributionNetwork,
@@ -32,16 +30,6 @@ class PurchasesDeprecation: PurchasesDeprecatable {
 
     init(purchases: Purchases) {
         self.purchases = purchases
-    }
-
-    @available(*, deprecated)
-    var allowSharingAppStoreAccount: Bool {
-        set {
-            purchases.allowSharingAppStoreAccount = newValue
-        }
-        get {
-            return purchases.allowSharingAppStoreAccount
-        }
     }
 
     @available(*, deprecated)
