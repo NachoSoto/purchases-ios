@@ -172,6 +172,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
     func testPurchaseSK2PackageSkipsIfPurchaseFailed() async throws {
         try AvailabilityChecks.iOS15APIAvailableOrSkipTest()
 
+        // todo: write separate test
         guard self.systemInfo.useStoreKit2IfAvailable else {
             throw XCTSkip("StoreKit 2 tests are disabled.")
         }

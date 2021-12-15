@@ -47,6 +47,9 @@ class StoreProductTests: StoreKitConfigTestCase {
             let sk1Product = try XCTUnwrap(sk1StoreProductsByID[sk1ProductID])
             let equivalentSK2Product = try XCTUnwrap(sk2StoreProductsByID[sk1ProductID])
 
+            print(sk1Product.product)
+//            print(equivalentSK2Product.product)
+
             expect(sk1Product.productIdentifier) == equivalentSK2Product.productIdentifier
             expect(sk1Product.localizedDescription) == equivalentSK2Product.localizedDescription
             expect(sk1Product.price) == equivalentSK2Product.price
@@ -54,6 +57,12 @@ class StoreProductTests: StoreKitConfigTestCase {
             expect(sk1Product.productIdentifier) == equivalentSK2Product.productIdentifier
             expect(sk1Product.isFamilyShareable) == equivalentSK2Product.isFamilyShareable
             expect(sk1Product.localizedTitle) == equivalentSK2Product.localizedTitle
+
+            expect(sk1Product.isFamilyShareable) == equivalentSK2Product.isFamilyShareable
+            expect(sk1Product.subscriptionPeriod) == equivalentSK2Product.subscriptionPeriod
+            expect(sk1Product.introductoryPrice) == equivalentSK2Product.introductoryPrice
+            expect(sk1Product.discounts) == equivalentSK2Product.discounts
+
             if sk1Product.subscriptionGroupIdentifier != nil {
                 expect(sk1Product.subscriptionGroupIdentifier) == equivalentSK2Product.subscriptionGroupIdentifier
             } else {

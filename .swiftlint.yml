@@ -16,6 +16,7 @@ opt_in_rules:
   - multiline_parameters
   - vertical_parameter_alignment
   - vertical_parameter_alignment_on_call
+  - trailing_semicolon
 
 identifier_name:
   max_length: 
