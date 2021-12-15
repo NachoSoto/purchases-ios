@@ -34,6 +34,7 @@ class StoreProductTests: StoreKitConfigTestCase {
 
         let sk2Fetcher = ProductsFetcherSK2()
         let sk2StoreProducts = try await sk2Fetcher.products(identifiers: productIdentifiers)
+            .map { StoreProduct.from(product: $0) }
         let sk2StoreProductsByID = sk2StoreProducts.uniqueIndex { $0.productIdentifier }
 
         expect(sk1StoreProducts.count) == productIdentifiers.count
@@ -42,9 +43,6 @@ class StoreProductTests: StoreKitConfigTestCase {
         for sk1ProductID in sk1StoreProductsByID.keys {
             let sk1Product = try XCTUnwrap(sk1StoreProductsByID[sk1ProductID])
             let equivalentSK2Product = try XCTUnwrap(sk2StoreProductsByID[sk1ProductID])
-
-            print(sk1Product.product)
-//            print(equivalentSK2Product.product)
 
             expect(sk1Product.productIdentifier) == equivalentSK2Product.productIdentifier
             expect(sk1Product.localizedDescription) == equivalentSK2Product.localizedDescription
@@ -55,14 +53,25 @@ class StoreProductTests: StoreKitConfigTestCase {
             expect(sk1Product.localizedTitle) == equivalentSK2Product.localizedTitle
 
             expect(sk1Product.isFamilyShareable) == equivalentSK2Product.isFamilyShareable
-            expect(sk1Product.subscriptionPeriod) == equivalentSK2Product.subscriptionPeriod
-            expect(sk1Product.introductoryPrice) == equivalentSK2Product.introductoryPrice
+
             expect(sk1Product.discounts) == equivalentSK2Product.discounts
 
-            if sk1Product.subscriptionGroupIdentifier != nil {
-                expect(sk1Product.subscriptionGroupIdentifier) == equivalentSK2Product.subscriptionGroupIdentifier
+            if sk1Product.subscriptionPeriod == nil {
+                expect(equivalentSK2Product.subscriptionPeriod).to(beNil())
             } else {
+                expect(sk1Product.subscriptionPeriod) == equivalentSK2Product.subscriptionPeriod
+            }
+
+            if sk1Product.introductoryPrice == nil {
+                expect(equivalentSK2Product.introductoryPrice).to(beNil())
+            } else {
+                expect(sk1Product.introductoryPrice) == equivalentSK2Product.introductoryPrice
+            }
+
+            if sk1Product.subscriptionGroupIdentifier == nil {
                 expect(equivalentSK2Product.subscriptionGroupIdentifier).to(beNil())
+            } else {
+                expect(sk1Product.subscriptionGroupIdentifier) == equivalentSK2Product.subscriptionGroupIdentifier
             }
         }
     }
@@ -71,7 +80,7 @@ class StoreProductTests: StoreKitConfigTestCase {
         let productIdentifier = "com.revenuecat.monthly_4.99.1_week_intro"
         let sk1Fetcher = ProductsFetcherSK1(productsRequestFactory: ProductsRequestFactory(),
                                             requestTimeout: Self.requestTimeout)
-        var result: Result<Set<StoreProduct>, Error>!
+        var result: Result<Set<SK1StoreProduct>, Error>!
 
         sk1Fetcher.products(withIdentifiers: Set([productIdentifier])) { products in
             result = products

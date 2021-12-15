@@ -49,7 +49,9 @@ class ProductsManager: NSObject {
                 }
             }
         } else {
-            productsFetcherSK1.products(withIdentifiers: identifiers, completion: completion)
+            productsFetcherSK1.products(withIdentifiers: identifiers) { result in
+                completion(result.map { Set($0.map(StoreProduct.from(product:))) })
+            }
         }
     }
 

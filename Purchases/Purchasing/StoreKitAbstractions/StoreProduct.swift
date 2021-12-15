@@ -344,6 +344,18 @@ internal struct SK1StoreProduct: StoreProductType {
 
 // MARK: - Extensions
 
+extension SK1StoreProduct: Hashable {
+
+    static func == (lhs: SK1StoreProduct, rhs: SK1StoreProduct) -> Bool {
+        return lhs.underlyingSK1Product == rhs.underlyingSK1Product
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.underlyingSK1Product)
+    }
+
+}
+
 @available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *)
 extension SK2StoreProduct: Hashable {
 
