@@ -194,7 +194,7 @@ class PurchasesOrchestrator {
     func purchase(package: Package, completion: @escaping PurchaseCompletedBlock) {
         // todo: clean up, move to new class along with the private funcs below
         if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *),
-           let storeProduct = package.storeProduct as? SK2StoreProduct {
+           let storeProduct = package.storeProduct.product as? SK2StoreProduct {
             _ = Task<Void, Never> {
                 let result = await purchase(sk2StoreProduct: storeProduct)
                 DispatchQueue.main.async {
@@ -212,10 +212,10 @@ class PurchasesOrchestrator {
                 }
             }
         } else {
-            guard package.storeProduct is SK1StoreProduct else {
+            guard let product = package.storeProduct.sk1Product else {
                 fatalError("could not identify StoreKit version to use! StoreProduct: \(package.storeProduct)")
             }
-            purchase(sk1Package: package, completion: completion)
+            purchase(sk1Product: product, package: package, completion: completion)
         }
     }
 
@@ -631,15 +631,11 @@ private extension PurchasesOrchestrator {
         }
     }
 
-    func purchase(sk1Package: Package, completion: @escaping PurchaseCompletedBlock) {
-        guard let sk1StoreProduct = sk1Package.storeProduct as? SK1StoreProduct else {
-            return
-        }
-        let sk1Product = sk1StoreProduct.underlyingSK1Product
+    func purchase(sk1Product: SK1Product, package: Package, completion: @escaping PurchaseCompletedBlock) {
         let payment = storeKitWrapper.payment(withProduct: sk1Product)
         purchase(sk1Product: sk1Product,
                  payment: payment,
-                 presentedOfferingIdentifier: sk1Package.offeringIdentifier,
+                 presentedOfferingIdentifier: package.offeringIdentifier,
                  completion: completion)
     }
 

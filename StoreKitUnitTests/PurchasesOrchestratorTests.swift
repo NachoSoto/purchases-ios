@@ -156,7 +156,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         let storeProduct = try await fetchSk2StoreProduct()
         let package = Package(identifier: "package",
                               packageType: .monthly,
-                              storeProduct: storeProduct,
+                              storeProduct: StoreProduct.from(product: storeProduct),
                               offeringIdentifier: "offering")
 
         _ = await withCheckedContinuation { continuation in
