@@ -40,13 +40,15 @@
 
     /// Returns all product IDs of the non-subscription purchases a user has made.
     @available(*, deprecated, message: "use nonSubscriptionTransactions")
-    @objc public var nonConsumablePurchases: Set<String> { Set(self.nonSubscriptionTransactions.map { $0.productId }) }
+    @objc public var nonConsumablePurchases: Set<String> {
+        Set(self.nonSubscriptionTransactions.map { $0.productIdentifier })
+    }
 
     /**
      * Returns all the non-subscription purchases a user has made.
      * The purchases are ordered by purchase date in ascending order.
      */
-    @objc public let nonSubscriptionTransactions: [Transaction]
+    @objc public let nonSubscriptionTransactions: [StoreTransaction]
 
     /**
      * Returns the fetch date of this CustomerInfo.
@@ -167,11 +169,10 @@
 
     convenience init(data: [String: Any]) throws {
         try self.init(data: data,
-                      dateFormatter: ISO8601DateFormatter.default,
-                      transactionsFactory: TransactionsFactory())
+                      dateFormatter: ISO8601DateFormatter.default)
     }
 
-    init(data: [String: Any], dateFormatter: DateFormatterType, transactionsFactory: TransactionsFactory) throws {
+    init(data: [String: Any], dateFormatter: DateFormatterType) throws {
         guard let subscriberObject = data["subscriber"] as? [String: Any] else {
             Logger.error(Strings.customerInfo.missing_json_object_instantiation_error(maybeJsonData: data))
             throw CustomerInfoError.missingJsonObject
@@ -180,8 +181,7 @@
         let subscriberData: SubscriberData
         do {
             try subscriberData = SubscriberData(subscriberData: subscriberObject,
-                                                dateFormatter: dateFormatter,
-                                                transactionsFactory: transactionsFactory)
+                                                dateFormatter: dateFormatter)
         } catch let subscriberDataError {
             throw CustomerInfo.createSubscriberDataError(subscriberDataError, subscriberDictionary: subscriberObject)
         }
@@ -272,13 +272,12 @@
         let firstSeen: Date
         let nonSubscriptionsByProductId: [String: [[String: Any]]]
         let entitlementsData: [String: Any]
-        let nonSubscriptionTransactions: [Transaction]
+        let nonSubscriptionTransactions: [StoreTransaction]
         let allTransactionsByProductId: [String: [String: Any]]
         let allPurchases: [String: [String: Any]]
 
         init(subscriberData: [String: Any],
-             dateFormatter: DateFormatterType,
-             transactionsFactory: TransactionsFactory) throws {
+             dateFormatter: DateFormatterType) throws {
             let maybeSubscriptions = subscriberData["subscriptions"] as? [String: [String: Any]] ?? [:]
             self.subscriptionTransactionsByProductId = maybeSubscriptions
 
@@ -309,7 +308,7 @@
             self.nonSubscriptionsByProductId =
                 subscriberData["non_subscriptions"] as? [String: [[String: Any]]] ?? [:]
             self.entitlementsData = subscriberData["entitlements"] as? [String: Any] ?? [:]
-            self.nonSubscriptionTransactions = transactionsFactory.nonSubscriptionTransactions(
+            self.nonSubscriptionTransactions = TransactionsFactory.nonSubscriptionTransactions(
                 withSubscriptionsData: nonSubscriptionsByProductId,
                 dateFormatter: dateFormatter)
 

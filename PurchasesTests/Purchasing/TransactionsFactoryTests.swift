@@ -10,10 +10,10 @@ import Nimble
 import XCTest
 @testable import RevenueCat
 
+// todo
 class TransactionsFactoryTests: XCTestCase {
 
     let dateFormatter = DateFormatter()
-    let transactionsFactory = TransactionsFactory()
 
     let sampleTransactions = [
         "100_coins": [
@@ -60,16 +60,21 @@ class TransactionsFactoryTests: XCTestCase {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     }
 
-    func testNonSubscriptionsIsCorrectlyCreated() {
-        let nonSubscriptionTransactions = transactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: sampleTransactions, dateFormatter: dateFormatter)
+    func testNonSubscriptionsIsCorrectlyCreated() throws {
+        let nonSubscriptionTransactions = TransactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: sampleTransactions, dateFormatter: dateFormatter)
         expect(nonSubscriptionTransactions.count) == 5
 
-        sampleTransactions.forEach { productId, transactionsData in
-            let filteredTransactions = nonSubscriptionTransactions.filter { $0.productId == productId }
+        try sampleTransactions.forEach { productId, transactionsData in
+            let filteredTransactions = nonSubscriptionTransactions
+                .filter { $0.productIdentifier == productId }
+
             expect(filteredTransactions.count) == transactionsData.count
-            transactionsData.forEach { dictionary in
-                guard let transactionId = dictionary["id"] as? String else { fatalError("incorrect dict format") }
-                let containsTransaction = filteredTransactions.contains { $0.revenueCatId == transactionId }
+
+            try transactionsData.forEach { dictionary in
+                let transactionId = try XCTUnwrap(dictionary["id"] as? String)
+                let containsTransaction = filteredTransactions
+                    .contains { $0.transactionIdentifier == transactionId }
+
                 expect(containsTransaction) == true
             }
         }
@@ -77,7 +82,7 @@ class TransactionsFactoryTests: XCTestCase {
     }
 
     func testNonSubscriptionsIsEmptyIfThereAreNoNonSubscriptions() {
-        let list = transactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: [:], dateFormatter: dateFormatter)
+        let list = TransactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: [:], dateFormatter: dateFormatter)
         expect(list).to(beEmpty())
     }
 
@@ -99,9 +104,9 @@ class TransactionsFactoryTests: XCTestCase {
             ]
         ]
         
-        let nonSubscriptionTransactions = transactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: subscriptionsData, dateFormatter: dateFormatter)
+        let nonSubscriptionTransactions = TransactionsFactory.nonSubscriptionTransactions(withSubscriptionsData: subscriptionsData, dateFormatter: dateFormatter)
         expect(nonSubscriptionTransactions.count) == 1
-        expect(nonSubscriptionTransactions.first!.productId) == "lifetime_access"
+        expect(nonSubscriptionTransactions.first!.productIdentifier) == "lifetime_access"
     }
 
 }

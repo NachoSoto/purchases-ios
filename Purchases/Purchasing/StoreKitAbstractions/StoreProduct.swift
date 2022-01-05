@@ -15,6 +15,8 @@
 import Foundation
 import StoreKit
 
+// todo: API tester!
+
 /// TypeAlias to StoreKit 1's Product type, called `StoreKit/SKProduct`
 public typealias SK1Product = SKProduct
 
