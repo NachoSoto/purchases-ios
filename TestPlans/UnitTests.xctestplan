@@ -20,6 +20,17 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "BeginRefundRequestHelperTests",
+        "ManageSubscriptionsHelperTests",
+        "ProductsManagerTests",
+        "PurchasesOrchestratorTests",
+        "StoreKitConfigTestCase",
+        "TransactionsManagerSK1Tests",
+        "TransactionsManagerSK2Tests",
+        "TrialOrIntroPriceEligibilityCheckerSK1Tests",
+        "TrialOrIntroPriceEligibilityCheckerSK2Tests"
+      ],
       "target" : {
         "containerPath" : "container:RevenueCat.xcodeproj",
         "identifier" : "2DAC5F7126F13C9800C5258F",
