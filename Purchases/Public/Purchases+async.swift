@@ -91,11 +91,11 @@ extension Purchases {
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func purchaseAsync(product: SKProduct) async throws ->
+    func purchaseAsync(product: StoreProduct) async throws ->
     // swiftlint:disable:next large_tuple
     (transaction: StoreTransaction, customerInfo: CustomerInfo, userCancelled: Bool) {
         return try await withCheckedThrowingContinuation { continuation in
-            purchase(product: product) { maybeTransaction, maybeCustomerInfo, maybeError, userCancelled in
+            purchase(storeProduct: product) { maybeTransaction, maybeCustomerInfo, maybeError, userCancelled in
                 if let error = maybeError {
                     continuation.resume(throwing: error)
                     return
@@ -135,11 +135,11 @@ extension Purchases {
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func purchaseAsync(product: SKProduct, discount: StoreProductDiscount) async throws ->
+    func purchaseAsync(product: StoreProduct, discount: StoreProductDiscount) async throws ->
     // swiftlint:disable:next large_tuple
     (transaction: StoreTransaction, customerInfo: CustomerInfo, userCancelled: Bool) {
         return try await withCheckedThrowingContinuation { continuation in
-            purchase(product: product,
+            purchase(storeProduct: product,
                      discount: discount) { maybeTransaction, maybeCustomerInfo, maybeError, userCancelled in
                 if let error = maybeError {
                     continuation.resume(throwing: error)

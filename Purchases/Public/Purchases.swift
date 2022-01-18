@@ -830,7 +830,7 @@ public extension Purchases {
     }
 
     /**
-     * Use this function if you are not using the Offerings system to purchase an `SKProduct`.
+     * Use this function if you are not using the Offerings system to purchase an `StoreProduct`.
      * If you are using the Offerings system, use ``Purchases/purchase(package:completion:)`` instead.
      *
      * Call this method when a user has decided to purchase a product. Only call this in direct response to user input.
@@ -840,7 +840,7 @@ public extension Purchases {
      * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will
      * handle this for you.
      *
-     * - Parameter product: The `SKProduct` the user intends to purchase
+     * - Parameter product: The `StoreProduct` the user intends to purchase
      * - Parameter completion: A completion block that is called when the purchase completes.
      *
      * If the purchase was successful there will be a `StoreTransaction` and a ``CustomerInfo``.
@@ -849,14 +849,13 @@ public extension Purchases {
      *
      * If the user cancelled, `userCancelled` will be `YES`.
      */
-    @objc(purchaseProduct:withCompletion:)
-    func purchase(product: SKProduct, completion: @escaping PurchaseCompletedBlock) {
-        let payment: SKMutablePayment = storeKitWrapper.payment(withProduct: product)
-        purchase(product: product, payment: payment, package: nil, completion: completion)
+    @objc(purchaseStoreProduct:withCompletion:)
+    func purchase(storeProduct: StoreProduct, completion: @escaping PurchaseCompletedBlock) {
+        purchasesOrchestrator.purchase(storeProduct: storeProduct, package: nil, completion: completion)
     }
 
     /**
-     * Use this function if you are not using the Offerings system to purchase an `SKProduct`.
+     * Use this function if you are not using the Offerings system to purchase an `StoreProduct`.
      * If you are using the Offerings system, use ``Purchases/purchase(package:completion:)`` instead.
      *
      * Call this method when a user has decided to purchase a product. Only call this in direct response to user input.
@@ -866,13 +865,13 @@ public extension Purchases {
      * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will
      * handle this for you.
      *
-     * - Parameter product: The `SKProduct` the user intends to purchase
+     * - Parameter product: The `StoreProduct` the user intends to purchase
      * - Parameter completion: A completion block that is called when the purchase completes.
      *
      * If the user cancelled, `userCancelled` will be `YES`.
      */
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func purchase(product: SKProduct) async throws ->
+    func purchase(product: StoreProduct) async throws ->
     // swiftlint:disable:next large_tuple
     (transaction: StoreTransaction, customerInfo: CustomerInfo, userCancelled: Bool) {
         return try await purchaseAsync(product: product)
@@ -897,7 +896,7 @@ public extension Purchases {
      */
     @objc(purchasePackage:withCompletion:)
     func purchase(package: Package, completion: @escaping PurchaseCompletedBlock) {
-        purchasesOrchestrator.purchase(package: package, completion: completion)
+        purchasesOrchestrator.purchase(storeProduct: package.storeProduct, package: package, completion: completion)
     }
 
     /**
@@ -921,7 +920,7 @@ public extension Purchases {
     }
 
     /**
-     * Use this function if you are not using the Offerings system to purchase an `SKProduct` with an
+     * Use this function if you are not using the Offerings system to purchase a `StoreProduct` with an
      * applied `StoreProductDiscount`.
      * If you are using the Offerings system, use ``Purchases/purchase(package:discount:completion:)`` instead.
      *
@@ -933,7 +932,7 @@ public extension Purchases {
      * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will handle
      * this for you.
      *
-     * - Parameter product: The `SKProduct` the user intends to purchase
+     * - Parameter product: The `StoreProduct` the user intends to purchase
      * - Parameter discount: The `StoreProductDiscount` to apply to the purchase
      * - Parameter completion: A completion block that is called when the purchase completes.
      *
@@ -942,16 +941,18 @@ public extension Purchases {
      * If the user cancelled, `userCancelled` will be `true`.
      */
     @available(iOS 12.2, macOS 10.14.4, watchOS 6.2, macCatalyst 13.0, tvOS 12.2, *)
-    @objc(purchaseProduct:withDiscount:completion:)
-    func purchase(product: SKProduct, discount: StoreProductDiscount, completion: @escaping PurchaseCompletedBlock) {
-        purchasesOrchestrator.purchase(sk1Product: product,
-                                       storeProductDiscount: discount,
+    @objc(purchaseStoreProduct:withDiscount:completion:)
+    func purchase(storeProduct: StoreProduct,
+                  discount: StoreProductDiscount,
+                  completion: @escaping PurchaseCompletedBlock) {
+        purchasesOrchestrator.purchase(storeProduct: storeProduct,
                                        package: nil,
+                                       discount: discount,
                                        completion: completion)
     }
 
     /**
-     * Use this function if you are not using the Offerings system to purchase an `SKProduct` with an
+     * Use this function if you are not using the Offerings system to purchase a `StoreProduct` with an
      * applied `StoreProductDiscount`.
      * If you are using the Offerings system, use ``Purchases/purchase(package:discount:completion:)`` instead.
      *
@@ -963,14 +964,14 @@ public extension Purchases {
      * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will handle
      * this for you.
      *
-     * - Parameter product: The `SKProduct` the user intends to purchase
+     * - Parameter product: The `StoreProduct` the user intends to purchase
      * - Parameter discount: The `StoreProductDiscount` to apply to the purchase
      * - Parameter completion: A completion block that is called when the purchase completes.
      *
      * If the user cancelled, `userCancelled` will be `true`.
      */
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func purchase(product: SKProduct, discount: StoreProductDiscount) async throws ->
+    func purchase(product: StoreProduct, discount: StoreProductDiscount) async throws ->
     // swiftlint:disable:next large_tuple
     (transaction: StoreTransaction, customerInfo: CustomerInfo, userCancelled: Bool) {
         return try await purchaseAsync(product: product, discount: discount)
@@ -996,15 +997,9 @@ public extension Purchases {
     @available(iOS 12.2, macOS 10.14.4, watchOS 6.2, macCatalyst 13.0, tvOS 12.2, *)
     @objc(purchasePackage:withDiscount:completion:)
     func purchase(package: Package, discount: StoreProductDiscount, completion: @escaping PurchaseCompletedBlock) {
-        // todo: add support for SK2 with discounts, move to new class
-        // https://github.com/RevenueCat/purchases-ios/issues/1055
-        guard let sk1Product = package.storeProduct.sk1Product else {
-            return
-        }
-
-        purchasesOrchestrator.purchase(sk1Product: sk1Product,
-                                       storeProductDiscount: discount,
+        purchasesOrchestrator.purchase(storeProduct: package.storeProduct,
                                        package: package,
+                                       discount: discount,
                                        completion: completion)
     }
 
@@ -1427,7 +1422,7 @@ extension Purchases: PurchasesOrchestratorDelegate {
 }
 
 // MARK: Deprecated
-// Deprecated functions extension
+
 public extension Purchases {
 
     /**
@@ -1480,6 +1475,37 @@ public extension Purchases {
                                     fromNetwork: network,
                                     forNetworkUserId: networkUserId)
         }
+    }
+
+    /**
+     * Use this function if you are not using the Offerings system to purchase an `SKProduct`.
+     * If you are using the Offerings system, use ``Purchases/purchase(package:completion:)`` instead.
+     *
+     * Call this method when a user has decided to purchase a product. Only call this in direct response to user input.
+     *
+     * From here `Purchases` will handle the purchase with `StoreKit` and call the `PurchaseCompletedBlock`.
+     *
+     * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will
+     * handle this for you.
+     *
+     * - Parameter product: The `SK1Product` the user intends to purchase
+     * - Parameter completion: A completion block that is called when the purchase completes.
+     *
+     * If the purchase was successful there will be a `StoreTransaction` and a ``CustomerInfo``.
+     *
+     * If the purchase was not successful, there will be an `NSError`.
+     *
+     * If the user cancelled, `userCancelled` will be `YES`.
+     */
+    @available(iOS, introduced: 11.0, deprecated: 11.0, renamed: "purchase(storeProduct:completion:)")
+    @available(tvOS, introduced: 11.0, deprecated: 11.0, renamed: "purchase(storeProduct:completion:)")
+    @available(watchOS, introduced: 6.2, deprecated: 6.2, renamed: "purchase(storeProduct:completion:)")
+    @available(macOS, introduced: 10.13, deprecated: 10.13, message: "purchase(storeProduct:completion:)")
+    @available(macCatalyst, introduced: 10.13, deprecated: 10.13, renamed: "purchase(storeProduct:completion:)")
+    @objc(purchaseProduct:withCompletion:)
+    func purchase(product: SK1Product, completion: @escaping PurchaseCompletedBlock) {
+        purchase(storeProduct: StoreProduct(sk1Product: product),
+                 completion: completion)
     }
 
 }
@@ -1541,14 +1567,42 @@ private extension Purchases {
         }
     }
 
-    func purchase(product: SKProduct,
-                  payment: SKMutablePayment,
-                  package: Package?,
-                  completion: @escaping PurchaseCompletedBlock) {
-        purchasesOrchestrator.purchase(sk1Product: product,
-                                       payment: payment,
-                                       package: package,
-                                       completion: completion)
-    }
+//    func purchase(storeProduct: StoreProduct,
+//                  package: Package?,
+//                  completion: @escaping PurchaseCompletedBlock) {
+//        if let sk1Product = storeProduct.sk1Product {
+//            let payment = storeKitWrapper.payment(withProduct: sk1Product)
+//
+//            purchasesOrchestrator.purchase(sk1Product: sk1Product,
+//                                           payment: payment,
+//                                           package: package,
+//                                           completion: completion)
+//        } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *),
+//                    let sk2Product = storeProduct.sk2Product {
+//            purchasesOrchestrator.purchase(sk2Product: sk2Product,
+//                                           completion: completion)
+//        } else {
+//            fatalError("Unrecognized product: \(storeProduct)")
+//        }
+//    }
+//
+//    @available(iOS 12.2, macOS 10.14.4, watchOS 6.2, macCatalyst 13.0, tvOS 12.2, *)
+//    func purchase(storeProduct: StoreProduct,
+//                  discount: StoreProductDiscount,
+//                  package: Package?,
+//                  completion: @escaping PurchaseCompletedBlock) {
+//        if let sk1Product = storeProduct.sk1Product {
+//            purchasesOrchestrator.purchase(sk1Product: sk1Product,
+//                                           storeProductDiscount: discount,
+//                                           package: package,
+//                                           completion: completion)
+//        } else if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *),
+//                    let sk2Product = storeProduct.sk2Product {
+//            purchasesOrchestrator.purchase(sk2Product: sk2Product,
+//                                           completion: completion)
+//        } else {
+//            fatalError("Unrecognized product: \(storeProduct)")
+//        }
+//    }
 
 }

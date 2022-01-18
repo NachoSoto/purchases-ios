@@ -133,10 +133,10 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
 
         let product = try await fetchSk1Product()
 
-        let storeProductDiscount = StoreProductDiscount(offerIdentifier: "offerid1",
-                                                        price: 11.1,
-                                                        paymentMode: .payAsYouGo,
-                                                        subscriptionPeriod: .init(value: 1, unit: .month))
+        let storeProductDiscount = MockStoreProductDiscount(offerIdentifier: "offerid1",
+                                                            price: 11.1,
+                                                            paymentMode: .payAsYouGo,
+                                                            subscriptionPeriod: .init(value: 1, unit: .month))
 
         _ = await withCheckedContinuation { continuation in
             orchestrator.promotionalOffer(forProductDiscount: storeProductDiscount,
@@ -154,16 +154,16 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         backend.stubbedPostReceiptCustomerInfo = mockCustomerInfo
 
         let product = try await fetchSk1Product()
-        let storeProduct = try await fetchSk1StoreProduct()
+        let storeProduct = StoreProduct(sk1Product: product)
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
-        let storeProductDiscount = StoreProductDiscount(offerIdentifier: "offerid1",
-                                                        price: 11.1,
-                                                        paymentMode: .payAsYouGo,
-                                                        subscriptionPeriod: .init(value: 1, unit: .month))
+        let storeProductDiscount = MockStoreProductDiscount(offerIdentifier: "offerid1",
+                                                            price: 11.1,
+                                                            paymentMode: .payAsYouGo,
+                                                            subscriptionPeriod: .init(value: 1, unit: .month))
 
         _ = await withCheckedContinuation { continuation in
             orchestrator.purchase(sk1Product: product,
@@ -183,14 +183,15 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         customerInfoManager.stubbedCachedCustomerInfoResult = mockCustomerInfo
         backend.stubbedPostReceiptCustomerInfo = mockCustomerInfo
 
-        let storeProduct = try await fetchSk2StoreProduct()
+        let storeProduct = StoreProduct.from(product: try await fetchSk2StoreProduct())
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
         let (transaction, customerInfo, error, userCancelled) = await withCheckedContinuation { continuation in
-            orchestrator.purchase(package: package) { transaction, customerInfo, error, userCancelled in
+            orchestrator.purchase(storeProduct: storeProduct,
+                                  package: package) { transaction, customerInfo, error, userCancelled in
                 continuation.resume(returning: (transaction, customerInfo, error, userCancelled))
             }
         }
@@ -217,14 +218,15 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         customerInfoManager.stubbedCachedCustomerInfoResult = mockCustomerInfo
         backend.stubbedPostReceiptCustomerInfo = mockCustomerInfo
 
-        let storeProduct = try await fetchSk2StoreProduct()
+        let storeProduct = StoreProduct.from(product: try await fetchSk2StoreProduct())
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
         _ = await withCheckedContinuation { continuation in
-            orchestrator.purchase(package: package) { transaction, customerInfo, error, userCancelled in
+            orchestrator.purchase(storeProduct: storeProduct,
+                                  package: package) { transaction, customerInfo, error, userCancelled in
                 continuation.resume(returning: (transaction, customerInfo, error, userCancelled))
             }
         }
@@ -240,14 +242,15 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         customerInfoManager.stubbedCachedCustomerInfoResult = mockCustomerInfo
         backend.stubbedPostReceiptCustomerInfo = mockCustomerInfo
 
-        let storeProduct = try await fetchSk2StoreProduct()
+        let storeProduct = StoreProduct.from(product: try await fetchSk2StoreProduct())
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
         _ = await withCheckedContinuation { continuation in
-            orchestrator.purchase(package: package) { transaction, customerInfo, error, userCancelled in
+            orchestrator.purchase(storeProduct: storeProduct,
+                                  package: package) { transaction, customerInfo, error, userCancelled in
                 continuation.resume(returning: (transaction, customerInfo, error, userCancelled))
             }
         }
@@ -263,14 +266,15 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         customerInfoManager.stubbedCachedCustomerInfoResult = mockCustomerInfo
         backend.stubbedPostReceiptCustomerInfo = mockCustomerInfo
 
-        let storeProduct = try await fetchSk2StoreProduct()
+        let storeProduct = StoreProduct.from(product: try await fetchSk2StoreProduct())
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
         let (transaction, customerInfo, error, userCancelled) = await withCheckedContinuation { continuation in
-            orchestrator.purchase(package: package) { transaction, customerInfo, error, userCancelled in
+            orchestrator.purchase(storeProduct: storeProduct,
+                                  package: package) { transaction, customerInfo, error, userCancelled in
                 continuation.resume(returning: (transaction, customerInfo, error, userCancelled))
             }
         }
@@ -291,14 +295,15 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         receiptFetcher.shouldReturnReceipt = false
         let expectedError = ErrorUtils.missingReceiptFileError()
 
-        let storeProduct = try await fetchSk2StoreProduct()
+        let storeProduct = StoreProduct.from(product: try await fetchSk2StoreProduct())
         let package = Package(identifier: "package",
                               packageType: .monthly,
                               storeProduct: storeProduct,
                               offeringIdentifier: "offering")
 
         let (transaction, customerInfo, error, userCancelled) = await withCheckedContinuation { continuation in
-            orchestrator.purchase(package: package) { transaction, customerInfo, error, userCancelled in
+            orchestrator.purchase(storeProduct: storeProduct,
+                                  package: package) { transaction, customerInfo, error, userCancelled in
                 continuation.resume(returning: (transaction, customerInfo, error, userCancelled))
             }
         }

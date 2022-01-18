@@ -186,6 +186,38 @@ public extension Purchases {
     }
 
     /**
+     * Use this function if you are not using the Offerings system to purchase an `SKProduct` with an
+     * applied `SKPaymentDiscount`.
+     * If you are using the Offerings system, use ``Purchases/purchase(package:discount:completion:)`` instead.
+     *
+     * Call this method when a user has decided to purchase a product with an applied discount.
+     * Only call this in direct response to user input.
+     *
+     * From here `Purchases` will handle the purchase with `StoreKit` and call the `PurchaseCompletedBlock`.
+     *
+     * - Note: You do not need to finish the transaction yourself in the completion callback, Purchases will handle
+     * this for you.
+     *
+     * - Parameter product: The `SKProduct` the user intends to purchase
+     * - Parameter discount: The `SKPaymentDiscount` to apply to the purchase
+     * - Parameter completion: A completion block that is called when the purchase completes.
+     *
+     * If the purchase was successful there will be a `StoreTransaction` and a ``CustomerInfo``.
+     * If the purchase was not successful, there will be an `Error`.
+     * If the user cancelled, `userCancelled` will be `true`.
+     */
+    @available(iOS, introduced: 12.2, obsoleted: 12.2, renamed: "purchase(storeProduct:discount:completion:)")
+    @available(tvOS, introduced: 12.2, obsoleted: 12.2, renamed: "purchase(storeProduct:discount:completion:)")
+    @available(watchOS, introduced: 6.2, obsoleted: 6.2, renamed: "purchase(storeProduct:discount:completion:)")
+    @available(macOS, introduced: 10.14.4, obsoleted: 10.14.4, message: "purchase(storeProduct:discount:completion:)")
+    // swiftlint:disable:next line_length
+    @available(macCatalyst, introduced: 10.14.4, obsoleted: 10.14.4, renamed: "purchase(storeProduct:discount:completion:)")
+    @objc(purchaseProduct:withDiscount:completion:)
+    func purchase(product: SK1Product, discount: SKPaymentDiscount, completion: @escaping PurchaseCompletedBlock) {
+        fatalError()
+    }
+
+    /**
      * Use this function to retrieve the `SKPaymentDiscount` for a given `SKProduct`.
      *
      * - Parameter discount: The `SKProductDiscount` to apply to the product.
