@@ -4,7 +4,10 @@
       "id" : "6EE88B1C-2739-4847-85D2-D560E881945B",
       "name" : "Configuration 1",
       "options" : {
-
+        "addressSanitizer" : {
+          "enabled" : false
+        },
+        "threadSanitizerEnabled" : true
       }
     }
   ],
@@ -15,6 +18,57 @@
   "testTargets" : [
     {
       "parallelizable" : true,
+      "skippedTests" : [
+        "ASN1ContainerBuilderTests",
+        "ASN1ObjectIdentifierBuilderTests",
+        "AppleReceiptBuilderTests",
+        "ArraySliceUInt8ExtensionsTests",
+        "AtomicTests",
+        "AttributionDataMigratorTests",
+        "AttributionPosterTests",
+        "AttributionTypeFactoryTests",
+        "BackendSubscriberAttributesTests",
+        "BackendTests",
+        "BasicCustomerInfoTests",
+        "DNSCheckerTests",
+        "DateFormatterExtensionTests",
+        "DeviceCacheSubscriberAttributesTests",
+        "DeviceCacheTests",
+        "DictionaryExtensionsTests",
+        "ETagManagerTests",
+        "EmptyCustomerInfoTests",
+        "EntitlementInfosTests",
+        "ErrorCodeTests",
+        "HTTPClientTests",
+        "ISOPeriodFormatterTests",
+        "IdentityManagerTests",
+        "InAppPurchaseBuilderTests",
+        "InMemoryCachedObjectTests",
+        "IntroEligibilityCalculatorTests",
+        "NSDataExtensionsTests",
+        "NSDateExtensionsTests",
+        "NSErrorRCExtensionsTests",
+        "OfferingsManagerTests",
+        "OfferingsTests",
+        "ProductRequestDataSK1ProductInitializationTests",
+        "ProductRequestDataTests",
+        "ProductsFetcherSK1Tests",
+        "PurchasesSubscriberAttributesTests",
+        "PurchasesTests",
+        "ReceiptFetcherTests",
+        "ReceiptParserTests",
+        "ReceiptParsingRealReceiptTests",
+        "SKPaymentTransactionExtensionsTests",
+        "SetExtensionsTests",
+        "StoreKitRequestFetcherTests",
+        "StoreKitWrapperTests",
+        "SubscriberAttributeTests",
+        "SubscriberAttributesManagerTests",
+        "SubscriptionPeriodTests",
+        "SystemInfoTests",
+        "TransactionsFactoryTests",
+        "UInt8ExtensionsTests"
+      ],
       "target" : {
         "containerPath" : "container:RevenueCat.xcodeproj",
         "identifier" : "2DC5621D24EC63430031F69B",

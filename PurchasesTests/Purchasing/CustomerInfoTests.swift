@@ -212,7 +212,7 @@ class BasicCustomerInfoTests: XCTestCase {
         expect(customerInfo!.managementURL!.absoluteString) == "https://apple.com/manage_subscription"
     }
 
-    func testManagementURLIsNullWithInvalidURL() {
+    func testManagementURLIsNullWithInvalidURL() throws {
         var customerInfo = CustomerInfo(testData: [
             "request_date": "2019-08-16T10:30:42Z",
             "subscriber": [
@@ -222,6 +222,36 @@ class BasicCustomerInfoTests: XCTestCase {
                 "other_purchases": [:],
                 "original_app_user_id": ""
             ]])
+        expect(customerInfo!.managementURL).to(beNil())
+
+        let data = try XCTUnwrap(
+            """
+            {
+                "request_date": "2022-02-16T19:05:15Z",
+                "subscriber": {
+                    "non_subscriptions": {},
+                    "first_seen": "2022-02-16T19:05:14Z",
+                    "original_application_version": null,
+                    "other_purchases": {},
+                    "management_url": null,
+                    "subscriptions": {},
+                    "entitlements": {},
+                    "original_purchase_date": null,
+                    "original_app_user_id": "$RCAnonymousID:2a02c7bfdd9745538f8271828d5c6fac",
+                    "last_seen": "2022-02-16T19:05:14Z"
+                },
+                "request_date_ms": 1645038315028,
+                "schema_version": "2"
+            }
+            """.data(using: .utf8)
+        )
+
+        customerInfo = CustomerInfo(testData: try JSONSerialization.jsonObject(
+            with: data,
+            // swiftlint:disable:next force_cast
+            options: [])  as! [String: Any]
+        )
+        expect(customerInfo!.originalAppUserId) == "$RCAnonymousID:2a02c7bfdd9745538f8271828d5c6fac"
         expect(customerInfo!.managementURL).to(beNil())
 
         customerInfo = CustomerInfo(testData: [
