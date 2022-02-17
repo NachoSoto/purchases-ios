@@ -17,10 +17,8 @@ class HTTPClient {
 
     private let session: URLSession
     internal let systemInfo: SystemInfo
-    private var queuedRequests: [Request] = []
-    private var currentSerialRequest: Request?
+    private let state: Atomic<State> = .init(.initial)
     private var eTagManager: ETagManager
-    private let recursiveLock = NSRecursiveLock()
     private let dnsChecker: DNSCheckerType.Type
 
     init(
@@ -63,6 +61,16 @@ class HTTPClient {
         eTagManager.clearCaches()
     }
 
+}
+
+private extension HTTPClient {
+    struct State {
+        var queuedRequests: [Request]
+        var currentSerialRequest: Request?
+
+        static let initial: Self = .init(queuedRequests: [],
+                                         currentSerialRequest: nil)
+    }
 }
 
 private extension HTTPClient {
@@ -172,20 +180,22 @@ private extension HTTPClient {
         }
 
         if serially && !request.retried {
-            recursiveLock.lock()
-            if currentSerialRequest != nil {
-                Logger.debug(Strings.network.serial_request_queued(httpMethod: request.method.httpMethod,
-                                                                   path: request.path,
-                                                                   queuedRequestsCount: queuedRequests.count))
-                queuedRequests.append(request)
-                recursiveLock.unlock()
-                return
-            } else {
-                Logger.debug(Strings.network.starting_request(httpMethod: request.method.httpMethod,
-                                                              path: request.path))
-                currentSerialRequest = request
-                recursiveLock.unlock()
+            let earlyReturn: Bool = self.state.modify {
+                if $0.currentSerialRequest != nil {
+                    Logger.debug(Strings.network.serial_request_queued(httpMethod: request.method.httpMethod,
+                                                                       path: request.path,
+                                                                       queuedRequestsCount: $0.queuedRequests.count))
+                    $0.queuedRequests.append(request)
+                    return true
+                } else {
+                    Logger.debug(Strings.network.starting_request(httpMethod: request.method.httpMethod,
+                                                                  path: request.path))
+                    $0.currentSerialRequest = request
+                    return false
+                }
             }
+
+            guard !earlyReturn else { return }
         }
 
         Logger.debug(Strings.network.api_request_started(httpMethod: urlRequest.httpMethod,
@@ -246,8 +256,9 @@ private extension HTTPClient {
                 if httpResponse == nil {
                     Logger.debug(Strings.network.retrying_request(httpMethod: request.method.httpMethod,
                                                                   path: request.path))
-                    let retriedRequest = request.retriedRequest()
-                    self.queuedRequests.insert(retriedRequest, at: 0)
+                    self.state.modify {
+                        $0.queuedRequests.insert(request.retriedRequest(), at: 0)
+                    }
                     shouldBeginNextRequestWhenFinished = true
                 }
             }
@@ -267,18 +278,22 @@ private extension HTTPClient {
         }
 
         if shouldBeginNextRequestWhenFinished {
-            recursiveLock.lock()
-            Logger.debug(Strings.network.serial_request_done(httpMethod: currentSerialRequest?.method.httpMethod,
-                                                             path: currentSerialRequest?.path,
-                                                             queuedRequestsCount: queuedRequests.count))
-            self.currentSerialRequest = nil
-            if !self.queuedRequests.isEmpty {
-                let nextRequest = self.queuedRequests.removeFirst()
-                Logger.debug(Strings.network.starting_next_request(request: nextRequest.description))
-                self.perform(request: nextRequest,
-                             serially: true)
+            var nextRequest: Request?
+
+            self.state.modify {
+                Logger.debug(Strings.network.serial_request_done(httpMethod: $0.currentSerialRequest?.method.httpMethod,
+                                                                 path: $0.currentSerialRequest?.path,
+                                                                 queuedRequestsCount: $0.queuedRequests.count))
+                $0.currentSerialRequest = nil
+                if let next = $0.queuedRequests.popFirst() {
+                    nextRequest = next
+                    Logger.debug(Strings.network.starting_next_request(request: next.description))
+                }
             }
-            recursiveLock.unlock()
+
+            if let nextRequest = nextRequest {
+                self.perform(request: nextRequest, serially: true)
+            }
         }
     }
 
