@@ -54,7 +54,7 @@ private extension CreateAliasOperation {
         let request = HTTPRequest(method: .post(Body(newAppUserID: newAppUserID)),
                                   path: .createAlias(appUserID: appUserID))
 
-        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, response, error in
+        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, result in
             self.aliasCallbackCache.performOnAllItemsAndRemoveFromCache(withCacheable: self) { aliasCallback in
 
                 guard let completion = aliasCallback.completion else {

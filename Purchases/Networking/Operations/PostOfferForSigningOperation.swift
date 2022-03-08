@@ -48,7 +48,7 @@ class PostOfferForSigningOperation: NetworkOperation {
             path: .postOfferForSigning
         )
 
-        self.httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, response, error in
+        self.httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, _, response, error in
             let result: (String?, String?, UUID?, Int?, Error?) = {
                 if let error = error {
                     return (nil, nil, nil, nil, ErrorUtils.networkError(withUnderlyingError: error))

@@ -46,7 +46,7 @@ private extension GetOfferingsOperation {
 
         let request = HTTPRequest(method: .get, path: .getOfferings(appUserID: appUserID))
 
-        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, response, error in
+        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, _, response, error in
             defer {
                 completion()
             }

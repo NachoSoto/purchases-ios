@@ -86,7 +86,7 @@ private extension GetIntroEligibilityOperation {
                                                      fetchToken: self.receiptData.asFetchToken)),
                                   path: .getIntroEligibility(appUserID: appUserID))
 
-        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, response, error in
+        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, _, response, error in
             let eligibilityResponse = IntroEligibilityResponse(response: response,
                                                                statusCode: statusCode,
                                                                error: error,

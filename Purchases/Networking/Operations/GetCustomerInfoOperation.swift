@@ -60,7 +60,7 @@ private extension GetCustomerInfoOperation {
 
         let request = HTTPRequest(method: .get, path: .getCustomerInfo(appUserID: appUserID))
 
-        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, response, error in
+        httpClient.perform(request, authHeaders: self.authHeaders) { statusCode, result in
             self.customerInfoCallbackCache.performOnAllItemsAndRemoveFromCache(withCacheable: self) { callback in
                 self.customerInfoResponseHandler.handle(customerInfoResponse: response,
                                                         statusCode: statusCode,
