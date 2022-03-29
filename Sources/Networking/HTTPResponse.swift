@@ -37,7 +37,7 @@ extension HTTPResponse: CustomStringConvertible {
 struct ErrorResponse {
 
     let code: BackendErrorCode
-    let message: String
+    let message: String?
     let attributeErrors: [String: String]
 
 }
@@ -78,7 +78,7 @@ extension ErrorResponse: Decodable {
         self.code = try container.decodeIfPresent(Int.self, forKey: .code)
             .map(BackendErrorCode.init(code:))
             ?? .unknownError
-        self.message = try container.decode(String.self, forKey: .message)
+        self.message = try container.decodeIfPresent(String.self, forKey: .message)
 
         let attributeErrors = try container.decodeIfPresent(Array<AttributeError>.self,
                                                             forKey: .attributeErrors) ?? []

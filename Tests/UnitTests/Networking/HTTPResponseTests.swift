@@ -96,6 +96,26 @@ class ErrorResponseTests: XCTestCase {
         expect(underlyingError.code) == BackendErrorCode.invalidSubscriberAttributes.rawValue
     }
 
+    func testUnknownResponseCreatesDefaultError() throws {
+        let result = try self.decode(Self.unknownResponse)
+        expect(result.code) == .unknownError
+        expect(result.message).to(beNil())
+        expect(result.attributeErrors).to(beEmpty())
+
+        let error = result
+            .asBackendError(withStatusCode: .invalidRequest) as NSError
+
+        expect(error.domain) == ErrorCode.errorDomain
+        expect(error.code) == ErrorCode.unknownError.rawValue
+        expect(error.userInfo[ErrorDetails.finishableKey as String] as? Bool) == true
+        expect(error.userInfo[Backend.RCAttributeErrorsKey] as? [String: String]).to(beEmpty())
+
+        let underlyingError = try XCTUnwrap(error.userInfo[NSUnderlyingErrorKey] as? NSError)
+
+        expect(underlyingError.domain) == "RevenueCat.BackendErrorCode"
+        expect(underlyingError.code) == BackendErrorCode.unknownError.rawValue
+    }
+
     func testErrorResponseWithOnlyMessage() throws {
         let result = try self.decode(Self.onlyMessageError)
         expect(result.code) == .unknownError
@@ -115,11 +135,18 @@ class ErrorResponseTests: XCTestCase {
 
 private extension ErrorResponseTests {
 
+    static let unknownResponse = """
+        {
+        "This is": "A different response format"
+        }
+        """
+
     static let onlyMessageError = """
         {
         "message": "Something is wrong but we don't know what."
         }
         """
+
     static let withAttributeErrors = """
         {
         "attribute_errors": [
