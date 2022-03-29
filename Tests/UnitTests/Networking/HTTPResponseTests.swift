@@ -69,14 +69,14 @@ class ErrorResponseTests: XCTestCase {
             .asBackendError(withStatusCode: .notFoundError) as NSError
 
         expect(error.domain) == ErrorCode.errorDomain
-        expect(error.code) == ErrorCode.unknownError.rawValue
+        expect(error.code) == ErrorCode.unknownBackendError.rawValue
         expect(error.userInfo[ErrorDetails.finishableKey as String] as? Bool) == true
         expect(error.userInfo[Backend.RCAttributeErrorsKey] as? [String: Any]).to(beEmpty())
 
         let underlyingError = try XCTUnwrap(error.userInfo[NSUnderlyingErrorKey] as? NSError)
 
         expect(underlyingError.domain) == "RevenueCat.BackendErrorCode"
-        expect(underlyingError.code) == BackendErrorCode.unknownError.rawValue
+        expect(underlyingError.code) == BackendErrorCode.unknownBackendError.rawValue
     }
 
     func testErrorWithAttributeErrorsCreatesBackendError() throws {
@@ -98,7 +98,7 @@ class ErrorResponseTests: XCTestCase {
 
     func testUnknownResponseCreatesDefaultError() throws {
         let result = try self.decode(Self.unknownResponse)
-        expect(result.code) == .unknownError
+        expect(result.code) == .unknownBackendError
         expect(result.message).to(beNil())
         expect(result.attributeErrors).to(beEmpty())
 
@@ -106,19 +106,19 @@ class ErrorResponseTests: XCTestCase {
             .asBackendError(withStatusCode: .invalidRequest) as NSError
 
         expect(error.domain) == ErrorCode.errorDomain
-        expect(error.code) == ErrorCode.unknownError.rawValue
+        expect(error.code) == ErrorCode.unknownBackendError.rawValue
         expect(error.userInfo[ErrorDetails.finishableKey as String] as? Bool) == true
         expect(error.userInfo[Backend.RCAttributeErrorsKey] as? [String: String]).to(beEmpty())
 
         let underlyingError = try XCTUnwrap(error.userInfo[NSUnderlyingErrorKey] as? NSError)
 
         expect(underlyingError.domain) == "RevenueCat.BackendErrorCode"
-        expect(underlyingError.code) == BackendErrorCode.unknownError.rawValue
+        expect(underlyingError.code) == BackendErrorCode.unknownBackendError.rawValue
     }
 
     func testErrorResponseWithOnlyMessage() throws {
         let result = try self.decode(Self.onlyMessageError)
-        expect(result.code) == .unknownError
+        expect(result.code) == .unknownBackendError
         expect(result.message) == "Something is wrong but we don't know what."
         expect(result.attributeErrors).to(beEmpty())
     }
