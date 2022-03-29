@@ -19,7 +19,7 @@ import Foundation
  A container for the most recent customer info returned from `Purchases`.
  These objects are non-mutable and do not update automatically.
  */
-@objc(RCCustomerInfo) public class CustomerInfo: NSObject {
+@objc(RCCustomerInfo) public final class CustomerInfo: NSObject {
 
     /// ``EntitlementInfos`` attached to this customer info.
     @objc public let entitlements: EntitlementInfos
@@ -220,6 +220,7 @@ import Foundation
         self.allPurchases = subscriberData.allPurchases
     }
 
+    // TODO: remove
     static func from(json: [String: Any]?) throws -> CustomerInfo {
         guard let customerJSON = json else {
             throw UnexpectedBackendResponseSubErrorCode.customerInfoNil
@@ -421,3 +422,15 @@ private extension CustomerInfo {
     }
 
 }
+
+//extension CustomerInfo: HTTPResponseBody {
+//
+//    convenience init(data: Data) throws {
+//        guard let dictionary = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+//            throw ErrorUtils.unexpectedBackendResponseError()
+//        }
+//
+//        try self.init(data: dictionary)
+//    }
+//
+//}

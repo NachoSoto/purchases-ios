@@ -73,6 +73,8 @@ extension HTTPStatusCode: ExpressibleByIntegerLiteral {
 
 extension HTTPStatusCode: Hashable {}
 
+extension HTTPStatusCode: Codable {}
+
 extension HTTPStatusCode {
 
     var isSuccessfulResponse: Bool {
@@ -81,6 +83,11 @@ extension HTTPStatusCode {
 
     var isServerError: Bool {
         return 500...599 ~= self.rawValue
+    }
+
+    // TODO: test
+    var successfullySynced: Bool {
+        return !(self.isServerError || self == .notFoundError)
     }
 
 }

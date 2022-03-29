@@ -493,8 +493,7 @@ class BackendPostReceiptDataTests: BaseBackendTests {
 
         self.httpClient.mock(
             requestPath: .postReceiptData,
-            response: .init(statusCode: .networkConnectTimeoutError,
-                            response: .failure(error))
+            response: .init(error: error)
         )
 
         var receivedError: NSError?
