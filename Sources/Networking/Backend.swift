@@ -24,6 +24,8 @@ typealias LogInResponseHandler = (Result<(info: CustomerInfo, created: Bool), Er
 class Backend {
 
     static let RCSuccessfullySyncedKey: NSError.UserInfoKey = "rc_successfullySynced"
+
+    // TODO: remove this?
     static let RCAttributeErrorsKey = "attribute_errors"
     static let RCAttributeErrorsResponseKey = "attributes_error_response"
 

@@ -17,6 +17,8 @@ enum CodableError: Error, CustomStringConvertible {
 
     case unexpectedValue(Any.Type)
     case valueNotFound(value: Any.Type, context: DecodingError.Context)
+
+    // TODO: remove?
     case invalidJSONObject(value: [String: Any])
 
     var description: String {
@@ -33,6 +35,39 @@ enum CodableError: Error, CustomStringConvertible {
 
 extension JSONDecoder {
 
+    /// Decodes a top-level value of the given type from the given Data containing a JSON representation of `type`.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the value to decode. The default is `T.self`.
+    ///   - data: The data to decode from.
+    ///   - keyDecodingStrategy: The strategy to use for automatically changing the
+    ///   value of keys before decoding. The default is `useDefaultKeys`.
+    ///   - dateDecodingStrategy: The strategy to use for decoding `Date` values. The default is `deferredToDate`.
+    ///   - dataDecodingStrategy: The strategy to use for decoding `Data` values. The default is `deferredToData`.
+    /// - Returns: A value of the requested type.
+    /// - throws: `CodableError` or `DecodableError` if the data is invalid or can't be deserialized.
+    /// - Note:this method logs the error before throwing, so it's "safe" to use with `try?`
+    func decode<T: Decodable>(
+        _ type: T.Type = T.self,
+        jsonData: Data,
+        keyDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys,
+        dateDecodingStrategy: DateDecodingStrategy = .deferredToDate,
+        dataDecodingStrategy: DataDecodingStrategy = .deferredToData
+    ) throws -> T {
+        self.keyDecodingStrategy = keyDecodingStrategy
+        self.dateDecodingStrategy = dateDecodingStrategy
+        self.dataDecodingStrategy = dataDecodingStrategy
+
+        do {
+            return try decode(type, from: jsonData)
+        } catch {
+            ErrorUtils.logDecodingError(error)
+            throw error
+        }
+    }
+
+    // TODO: delete?
+
     /// Decodes a top-level value of the given type from the given Dictionary.
     ///
     /// - Parameters:
@@ -43,7 +78,8 @@ extension JSONDecoder {
     ///   - dateDecodingStrategy: The strategy to use for decoding `Date` values. The default is `deferredToDate`.
     ///   - dataDecodingStrategy: The strategy to use for decoding `Data` values. The default is `deferredToData`.
     /// - Returns: A value of the requested type.
-    /// - throws: `CodableError` or `DecodableError` if the data is invalid or can't be deserialized.
+    /// - Throws: `CodableError` or `DecodableError` if the data is invalid or can't be deserialized.
+    /// - Note:this method logs the error before throwing, so it's "safe" to use with `try?`
     func decode<T: Decodable>(
         _ type: T.Type = T.self,
         dictionary: [String: Any],
@@ -55,16 +91,14 @@ extension JSONDecoder {
         self.dateDecodingStrategy = dateDecodingStrategy
         self.dataDecodingStrategy = dataDecodingStrategy
 
-        do {
-            if JSONSerialization.isValidJSONObject(dictionary) {
-                let jsonData = try JSONSerialization.data(withJSONObject: dictionary)
-                return try decode(type, from: jsonData)
-            } else {
-                throw CodableError.invalidJSONObject(value: dictionary)
-            }
-        } catch {
-            ErrorUtils.logDecodingError(error)
-            throw error
+        if JSONSerialization.isValidJSONObject(dictionary) {
+            return try self.decode(type,
+                                   jsonData: try JSONSerialization.data(withJSONObject: dictionary),
+                                   keyDecodingStrategy: keyDecodingStrategy,
+                                   dateDecodingStrategy: dateDecodingStrategy,
+                                   dataDecodingStrategy: dataDecodingStrategy)
+        } else {
+            throw CodableError.invalidJSONObject(value: dictionary)
         }
     }
 
@@ -114,6 +148,8 @@ private extension ErrorUtils {
      }
 
 }
+
+// TODO: delete?
 
 extension Encodable {
 

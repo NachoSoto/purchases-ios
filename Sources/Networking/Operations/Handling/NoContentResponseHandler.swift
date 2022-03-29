@@ -20,10 +20,11 @@ class NoContentResponseHandler {
         switch response {
         case let .success(response):
             guard response.statusCode.isSuccessfulResponse else {
-                let backendErrorCode = BackendErrorCode(code: response.jsonObject["code"])
-                let message = response.jsonObject["message"] as? String
-                let responseError = ErrorUtils.backendError(withBackendCode: backendErrorCode, backendMessage: message)
-                completion(responseError)
+                completion(
+                    ErrorResponse
+                        .from(response: response.jsonObject)
+                        .asBackendError(withStatusCode: response.statusCode)
+                )
 
                 return
             }
@@ -34,5 +35,15 @@ class NoContentResponseHandler {
             completion(ErrorUtils.networkError(withUnderlyingError: error))
         }
     }
+
+}
+
+extension NoContentResponseHandler {
+
+//    struct NoContent: HTTPResponseBody {
+//        
+//        init(data: Data) throws { }
+//        
+//    }
 
 }

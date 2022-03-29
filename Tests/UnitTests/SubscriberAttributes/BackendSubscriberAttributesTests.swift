@@ -162,7 +162,12 @@ class BackendSubscriberAttributesTests: XCTestCase {
             requestPath: .postSubscriberAttributes(appUserID: appUserID),
             response: .init(statusCode: 503,
                             response: [
-                                Backend.RCAttributeErrorsKey: ["some_attribute": "wasn't valid"]
+                                Backend.RCAttributeErrorsKey: [
+                                    [
+                                        "key_name": "$some_attribute",
+                                        "message": "wasn't valid"
+                                    ]
+                                ]
                             ])
         )
 
@@ -189,7 +194,7 @@ class BackendSubscriberAttributesTests: XCTestCase {
             fail("received attribute errors are not of type [String: String]")
             return
         }
-        expect(receivedAttributeErrors) == ["some_attribute": "wasn't valid"]
+        expect(receivedAttributeErrors) == ["$some_attribute": "wasn't valid"]
     }
 
     func testPostSubscriberAttributesCallsCompletionWithErrorInBadRequestCase() throws {
@@ -348,7 +353,12 @@ class BackendSubscriberAttributesTests: XCTestCase {
         var completionCallCount = 0
 
         let attributeErrors = [
-            Backend.RCAttributeErrorsKey: ["$email": "email is not in valid format"]
+            Backend.RCAttributeErrorsKey: [
+                [
+                    "key_name": "$email",
+                    "message": "email is not in valid format"
+                ]
+            ]
         ]
 
         self.mockHTTPClient.mock(requestPath: .postReceiptData,
@@ -377,7 +387,9 @@ class BackendSubscriberAttributesTests: XCTestCase {
         let nonNilReceivedError = try XCTUnwrap(receivedError)
 
         expect(nonNilReceivedError.successfullySynced) == true
-        expect(nonNilReceivedError.subscriberAttributesErrors) == attributeErrors[Backend.RCAttributeErrorsKey]
+        expect(nonNilReceivedError.subscriberAttributesErrors) == [
+            "$email": "email is not in valid format"
+        ]
 
         let underlyingError = try XCTUnwrap((nonNilReceivedError as NSError).userInfo[NSUnderlyingErrorKey] as? NSError)
 

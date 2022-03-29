@@ -26,10 +26,33 @@ struct HTTPResponse {
 extension HTTPResponse: CustomStringConvertible {
 
     var description: String {
-        "HTTPResponse(statusCode: \(self.statusCode.rawValue), jsonObject: \(self.jsonObject.description))"
+//        if let bodyDescription = (self.body as? CustomStringConvertible)?.description {
+        return "HTTPResponse(statusCode: \(self.statusCode.rawValue), body: \(self.jsonObject.description))"
+//        } else {
+//            return "HTTPResponse(statusCode: \(self.statusCode.rawValue), body: \(type(of: self.body))"
+//        }
     }
 
 }
+
+// MARK: -
+
+///// The content of an `HTTPResponse`
+///// - Note: this can be removed in favor of `Decodable` when all responses implement `Decodable`.
+// protocol HTTPResponseBody {
+//
+//    static func create(with data: Data) throws -> Self
+//
+// }
+
+/// Default implementation of `HTTPResponseBody` for any `Decodable`
+// extension Decodable {
+//
+//    static func create(with data: Data) throws -> Self {
+//        return try defaultJsonDecoder.decode(jsonData: data)
+//    }
+//
+// }
 
 // MARK: -
 
@@ -87,6 +110,22 @@ extension ErrorResponse: Decodable {
         self.attributeErrors = attributeErrors
             .dictionaryAllowingDuplicateKeys { $0.keyName }
             .mapValues { $0.message }
+    }
+
+}
+
+extension ErrorResponse {
+
+    static func from(response: HTTPResponse.Body) -> Self {
+        do {
+            return try defaultJsonDecoder.decode(dictionary: response)
+        } catch {
+            Logger.error(Strings.codable.decoding_error(error))
+
+            return .init(code: .unknownError,
+                         message: nil,
+                         attributeErrors: [:])
+        }
     }
 
 }

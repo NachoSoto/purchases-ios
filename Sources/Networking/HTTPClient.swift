@@ -359,3 +359,28 @@ private extension Encodable {
     }
 
 }
+
+// private struct AnyHTTPResponseBody: HTTPResponseBody {
+//
+//    init(_ type: HTTPResponseBody.Type) {
+//        private struct Implementation: HTTPResponseBody {
+//            static func create(with data: Data) throws ->  {
+//                body.
+//            }
+//        }
+//
+//
+//        return Implementation()
+//    }
+
+//    private let type: HTTPResponseBody.Type
+//
+//    init<T: HTTPResponseBody>(_ type: T.Type = T.self) {
+//        self.type = type
+//    }
+//
+//    init(data: Data) throws {
+//        <#code#>
+//    }
+
+// }

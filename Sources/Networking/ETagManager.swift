@@ -92,6 +92,7 @@ private extension ETagManager {
             if let cacheKey = eTagDefaultCacheKey(for: request),
                let value = $0.object(forKey: cacheKey),
                let data = value as? Data {
+//                return try? defaultJsonDecoder.decode(jsonData: data)
                 return ETagAndResponseWrapper(with: data)
             }
 
@@ -139,3 +140,17 @@ private extension ETagManager {
     }
 
 }
+
+extension ETagManager {
+
+    struct Response {
+
+        let eTag: String
+        let statusCode: HTTPStatusCode
+        let jsonObject: Data
+
+    }
+
+}
+
+extension ETagManager.Response: Codable {}
