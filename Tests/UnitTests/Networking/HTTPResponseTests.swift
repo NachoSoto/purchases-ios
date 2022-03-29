@@ -131,6 +131,14 @@ class ErrorResponseTests: XCTestCase {
         expect(result.attributeErrors).to(beEmpty())
     }
 
+    func testErrorResponseWithIntegerErrorCode() throws {
+        let result = try self.decode(Self.integerCode)
+
+        expect(result.code) == .invalidAuthToken
+        expect(result.message) == "Invalid auth token."
+        expect(result.attributeErrors).to(beEmpty())
+    }
+
 }
 
 private extension ErrorResponseTests {
@@ -155,21 +163,27 @@ private extension ErrorResponseTests {
             "message": "Email address is not a valid email."
         }
         ],
-        "code": 7263,
+        "code": "7263",
         "message": "Some subscriber attributes keys were unable to be saved."
         }
         """
 
     static let withoutAttributeErrors = """
         {
-        "code": 7224,
+        "code": "7224",
         "message": "Invalid auth token."
         }
         """
     static let unknownError = """
         {
-        "code": 7301,
+        "code": "7301",
         "message": "This is a future unknown error."
+        }
+        """
+    static let integerCode = """
+        {
+        "code": 7224,
+        "message": "Invalid auth token."
         }
         """
 

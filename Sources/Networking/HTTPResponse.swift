@@ -75,9 +75,14 @@ extension ErrorResponse: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.code = try container.decodeIfPresent(Int.self, forKey: .code)
-            .map(BackendErrorCode.init(code:))
-            ?? .unknownError
+        let codeAsInteger = try? container.decodeIfPresent(Int.self, forKey: .code)
+        let codeAsString = try? container.decodeIfPresent(String.self, forKey: .code)
+
+        let code: Int = codeAsInteger
+            ?? codeAsString.flatMap { Int($0) }
+            ?? BackendErrorCode.unknownError.rawValue
+
+        self.code = BackendErrorCode(code: code)
         self.message = try container.decodeIfPresent(String.self, forKey: .message)
 
         let attributeErrors = try container.decodeIfPresent(Array<AttributeError>.self,
