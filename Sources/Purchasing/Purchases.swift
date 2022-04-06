@@ -287,7 +287,7 @@ public typealias DeferredPromotionalPurchaseBlock = (@escaping PurchaseCompleted
                                                                       attributionFetcher: attributionFetcher,
                                                                       attributionDataMigrator: attributionDataMigrator)
         let attributionPoster = AttributionPoster(deviceCache: deviceCache,
-                                                  identityManager: identityManager,
+                                                  currentUserProvider: identityManager,
                                                   backend: backend,
                                                   attributionFetcher: attributionFetcher,
                                                   subscriberAttributesManager: subscriberAttributesManager)
@@ -302,10 +302,10 @@ public typealias DeferredPromotionalPurchaseBlock = (@escaping PurchaseCompleted
                                                 productsManager: productsManager)
         let manageSubsHelper = ManageSubscriptionsHelper(systemInfo: systemInfo,
                                                          customerInfoManager: customerInfoManager,
-                                                         identityManager: identityManager)
+                                                         currentUserProvider: identityManager)
         let beginRefundRequestHelper = BeginRefundRequestHelper(systemInfo: systemInfo,
                                                                 customerInfoManager: customerInfoManager,
-                                                                identityManager: identityManager)
+                                                                currentUserProvider: identityManager)
         let purchasesOrchestrator = PurchasesOrchestrator(productsManager: productsManager,
                                                           storeKitWrapper: storeKitWrapper,
                                                           systemInfo: systemInfo,
@@ -314,7 +314,7 @@ public typealias DeferredPromotionalPurchaseBlock = (@escaping PurchaseCompleted
                                                           receiptFetcher: receiptFetcher,
                                                           customerInfoManager: customerInfoManager,
                                                           backend: backend,
-                                                          identityManager: identityManager,
+                                                          currentUserProvider: identityManager,
                                                           transactionsManager: transactionsManager,
                                                           deviceCache: deviceCache,
                                                           manageSubscriptionsHelper: manageSubsHelper,
@@ -322,7 +322,7 @@ public typealias DeferredPromotionalPurchaseBlock = (@escaping PurchaseCompleted
         let trialOrIntroPriceChecker = TrialOrIntroPriceEligibilityChecker(receiptFetcher: receiptFetcher,
                                                                            introEligibilityCalculator: introCalculator,
                                                                            backend: backend,
-                                                                           identityManager: identityManager,
+                                                                           currentUserProvider: identityManager,
                                                                            operationDispatcher: operationDispatcher,
                                                                            productsManager: productsManager)
         self.init(appUserID: appUserID,
