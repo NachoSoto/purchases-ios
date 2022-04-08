@@ -869,7 +869,9 @@ public extension Purchases {
      * -  [Displaying Products](https://docs.revenuecat.com/docs/displaying-products)
      */
     @objc func getOfferings(completion: @escaping (Offerings?, Error?) -> Void) {
-        offeringsManager.offerings(appUserID: appUserID, completion: completion)
+        offeringsManager.offerings(appUserID: appUserID) { offerings, error in
+            completion(offerings, error?.asPurchasesError)
+        }
     }
 
     /**
@@ -1926,8 +1928,10 @@ private extension Purchases {
     func updateAllCaches(completion: ((Result<CustomerInfo, Error>) -> Void)?) {
         systemInfo.isApplicationBackgrounded { isAppBackgrounded in
             self.customerInfoManager.fetchAndCacheCustomerInfo(appUserID: self.appUserID,
-                                                               isAppBackgrounded: isAppBackgrounded,
-                                                               completion: completion)
+                                                               isAppBackgrounded: isAppBackgrounded) {
+                completion?($0.mapError { $0.asPurchasesError })
+            }
+
             self.offeringsManager.updateOfferingsCache(appUserID: self.appUserID,
                                                        isAppBackgrounded: isAppBackgrounded,
                                                        completion: nil)

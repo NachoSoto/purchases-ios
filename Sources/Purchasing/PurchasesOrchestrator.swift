@@ -172,6 +172,7 @@ class PurchasesOrchestrator {
 
                         return .init(discount: productDiscount, signedData: signedData)
                     }
+                    .mapError { $0.asPurchasesError }
 
                 completion(result)
             }
@@ -456,7 +457,7 @@ private extension PurchasesOrchestrator {
                 self.fetchProductsAndPostReceipt(withTransaction: transaction, receiptData: receiptData)
             } else {
                 self.handleReceiptPost(withTransaction: transaction,
-                                       result: .failure(ErrorUtils.missingReceiptFileError()),
+                                       result: .failure(.missingReceiptFile()),
                                        subscriberAttributes: nil)
             }
         }
@@ -537,7 +538,7 @@ private extension PurchasesOrchestrator {
             }
         } else {
             self.handleReceiptPost(withTransaction: transaction,
-                                   result: .failure(ErrorUtils.unknownError()),
+                                   result: .failure(.missingTransactionProductIdentifier()),
                                    subscriberAttributes: nil)
 
         }
@@ -574,7 +575,7 @@ private extension PurchasesOrchestrator {
     }
 
     func handleReceiptPost(withTransaction transaction: SKPaymentTransaction,
-                           result: Result<CustomerInfo, Error>,
+                           result: Result<CustomerInfo, BackendError>,
                            subscriberAttributes: SubscriberAttributeDict?) {
         operationDispatcher.dispatchOnMainThread {
             let appUserID = self.appUserID
@@ -584,36 +585,42 @@ private extension PurchasesOrchestrator {
 
             let completion = self.getAndRemovePurchaseCompletedCallback(forTransaction: transaction)
             let error = result.error
-            let nsError = error as NSError?
-            let finishable = (nsError?.userInfo[ErrorDetails.finishableKey as String] as? NSNumber)?.boolValue ?? false
+            let finishable = error?.finishable ?? false
 
             let storeTransaction = StoreTransaction(sk1Transaction: transaction)
 
-            if let customerInfo = result.value {
+            switch result {
+            case let .success(customerInfo):
                 self.customerInfoManager.cache(customerInfo: customerInfo, appUserID: appUserID)
                 completion?(storeTransaction, customerInfo, nil, false)
 
                 if self.finishTransactions {
                     self.storeKitWrapper.finishTransaction(transaction)
                 }
-            } else if finishable {
-                completion?(storeTransaction, nil, error, false)
-                if self.finishTransactions {
-                    self.storeKitWrapper.finishTransaction(transaction)
+
+            case let .failure(error):
+                let purchasesError = error.asPurchasesError
+
+                if finishable {
+                    completion?(storeTransaction, nil, purchasesError, false)
+                    if self.finishTransactions {
+                        self.storeKitWrapper.finishTransaction(transaction)
+                    }
+                } else {
+                    Logger.error(error)
+                    completion?(storeTransaction, nil, purchasesError, false)
                 }
-            } else {
-                Logger.error(Strings.receipt.unknown_backend_error)
-                completion?(storeTransaction, nil, error, false)
             }
         }
     }
 
-    func markSyncedIfNeeded(subscriberAttributes: SubscriberAttributeDict?, appUserID: String, error: Error?) {
-        if let error = error as NSError? {
-            if !error.successfullySynced {
-                return
-            }
-            Logger.error(Strings.attribution.subscriber_attributes_error(errors: error.subscriberAttributesErrors))
+    func markSyncedIfNeeded(subscriberAttributes: SubscriberAttributeDict?, appUserID: String, error: BackendError?) {
+        if let error = error {
+            guard error.successfullySynced else { return }
+
+            Logger.error(Strings.attribution.subscriber_attributes_error(
+                errors: (error as NSError).subscriberAttributesErrors)
+            )
         }
 
         subscriberAttributesManager.markAttributesAsSynced(subscriberAttributes, appUserID: appUserID)
@@ -676,7 +683,7 @@ private extension PurchasesOrchestrator {
         }
     }
 
-    func handleReceiptPost(result: Result<CustomerInfo, Error>,
+    func handleReceiptPost(result: Result<CustomerInfo, BackendError>,
                            subscriberAttributes: SubscriberAttributeDict,
                            completion: ((Result<CustomerInfo, Error>) -> Void)?) {
         operationDispatcher.dispatchOnMainThread {
@@ -690,7 +697,7 @@ private extension PurchasesOrchestrator {
 
             if let completion = completion {
                 self.operationDispatcher.dispatchOnMainThread {
-                    completion(result)
+                    completion(result.mapError { $0.asPurchasesError })
                 }
             }
         }
