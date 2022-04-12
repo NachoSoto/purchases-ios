@@ -32,6 +32,8 @@ enum TransactionsFactory {
 
 }
 
+// TODO: Decodable
+
 /// `StoreTransactionType` backed by data parsed from the server
 private struct BackendParsedTransaction: StoreTransactionType {
 

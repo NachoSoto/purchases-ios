@@ -139,6 +139,8 @@ import Foundation
             .isEqual(NSDictionary(dictionary: other.jsonObjectWithNoDate))
     }
 
+    // TODO: data!
+
     public override var hash: Int {
         var hasher = Hasher()
         hasher.combine(NSDictionary(dictionary: self.jsonObjectWithNoDate))
@@ -182,6 +184,8 @@ import Foundation
             Logger.error(Strings.customerInfo.missing_json_object_instantiation_error(jsonData: data))
             throw CustomerInfoError.missingJsonObject
         }
+
+        // TODO: custom serialization with errors?
 
         let subscriberData: SubscriberData
         do {

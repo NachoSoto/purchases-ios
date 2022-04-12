@@ -54,6 +54,7 @@ import Foundation
         return isEqual(toInfos: object)
     }
 
+    // TODO: decode entitlementsData too!
     convenience init(entitlementsData: [String: Any]?,
                      purchasesData: [String: Any],
                      requestDate: Date?) {
