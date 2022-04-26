@@ -31,9 +31,27 @@ extension Decoder {
 /// A type that can provide a default value.
 protocol DefaultValueProvider {
 
-    associatedtype Value
+    associatedtype WrappedValue
 
-    static var defaultValue: Value { get }
+    static var defaultValue: WrappedValue { get }
+
+}
+
+extension Optional: DefaultValueProvider {
+
+    static var defaultValue: Self { return .none }
+
+}
+
+extension Array: DefaultValueProvider {
+
+    static var defaultValue: Self { return [] }
+
+}
+
+extension Dictionary: DefaultValueProvider {
+
+    static var defaultValue: Self { return .init() }
 
 }
 
@@ -50,7 +68,7 @@ protocol DefaultValueProvider {
 @propertyWrapper
 struct DefaultValue<Source: DefaultValueProvider> {
 
-    typealias Value = Source.Value
+    typealias Value = Source.WrappedValue
 
     var wrappedValue = Source.defaultValue
 
@@ -84,12 +102,15 @@ extension DefaultValue: Encodable where Value: Encodable {
 /// ```
 /// struct Data {
 ///     @IgnoreDecodingErrors var url: URL?
+///     // TODO
 /// }
 /// ```
 @propertyWrapper
-struct IgnoreDecodeErrors<Value> {
+struct IgnoreDecodeErrors<Source: DefaultValueProvider> {
 
-    var wrappedValue: Value? = .none
+    typealias Value = Source.WrappedValue
+
+    var wrappedValue: Value = Source.defaultValue
 
 }
 
@@ -116,7 +137,10 @@ extension IgnoreDecodeErrors: Encodable where Value: Encodable {
 
 extension KeyedDecodingContainer {
 
-    func decode<T>(_ type: IgnoreDecodeErrors<T>.Type, forKey key: Key) -> IgnoreDecodeErrors<T> where T: Decodable {
+    func decode<T>(
+        _ type: IgnoreDecodeErrors<T>.Type,
+        forKey key: Key
+    ) -> IgnoreDecodeErrors<T> where T.WrappedValue: Decodable {
         do {
             return try self.decodeIfPresent(type, forKey: key) ?? .init()
         } catch {
@@ -132,7 +156,7 @@ extension KeyedDecodingContainer {
 
 extension KeyedDecodingContainer {
 
-    func decode<T>(_ type: DefaultValue<T>.Type, forKey key: Key) -> DefaultValue<T> where T.Value: Decodable {
+    func decode<T>(_ type: DefaultValue<T>.Type, forKey key: Key) -> DefaultValue<T> where T.WrappedValue: Decodable {
         do {
             return try self.decodeIfPresent(type, forKey: key) ?? .init()
         } catch {

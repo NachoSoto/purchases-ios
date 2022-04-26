@@ -58,7 +58,7 @@ class DecoderExtensionsDefaultValueTests: XCTestCase {
 class DecoderExtensionsIgnoreErrorsTests: XCTestCase {
 
     private struct Data: Codable, Equatable {
-        @IgnoreDecodeErrors var url: URL?
+        @IgnoreDecodeErrors<URL?> var url: URL?
 
         init(url: URL) {
             self.url = url
@@ -77,6 +77,63 @@ class DecoderExtensionsIgnoreErrorsTests: XCTestCase {
         let data: Data = try JSONDecoder.default.decode(jsonData: json)
 
         expect(data.url).to(beNil())
+    }
+
+}
+
+class DecoderExtensionsIgnoreCollectionErrorsTests: XCTestCase {
+
+    private struct Data: Codable, Equatable {
+        struct Content: Codable, Equatable {
+            let string: String
+        }
+
+        @IgnoreDecodeErrors<[Int]> var list: [Int]
+        @IgnoreDecodeErrors<[String: Content]> var map1: [String: Content]
+        @IgnoreDecodeErrors<[Int: [Content]]> var map2: [Int: [Content]]
+
+        init(list: [Int], map1: [String: Content], map2: [Int: [Content]]) {
+            self.list = list
+            self.map1 = map1
+            self.map2 = map2
+        }
+    }
+
+    func testDecodesActualValues() throws {
+        let data = Data(list: [1, 2, 3],
+                        map1: ["1": .init(string: "test1"), "2": .init(string: "test2")],
+                        map2: [1: [.init(string: "a"), .init(string: "b")]])
+        let decodedData = try data.encodeAndDecode()
+
+        expect(decodedData) == data
+    }
+
+    func testIgnoresListErrors() throws {
+        let json = "{\"list\": [\"not a number\"]}".data(using: .utf8)!
+        let data: Data = try JSONDecoder.default.decode(jsonData: json)
+
+        expect(data.list) == []
+    }
+
+    func testIgnoresMapErrors() throws {
+        let json = "{\"map1\": \"not a dictionary\"}".data(using: .utf8)!
+        let data: Data = try JSONDecoder.default.decode(jsonData: json)
+
+        expect(data.map1) == [:]
+    }
+
+    func testIgnoresInvalidKeyErrors() throws {
+        let json = "{\"map2\": {\"not a number\": {}}}".data(using: .utf8)!
+        let data: Data = try JSONDecoder.default.decode(jsonData: json)
+
+        expect(data.map1) == [:]
+    }
+
+    func testIgnoresNestedErrors() throws {
+        let json = "{\"map2\": {1: [{\"string\": [\"an array instead\"]}]}}".data(using: .utf8)!
+        let data: Data = try JSONDecoder.default.decode(jsonData: json)
+
+        expect(data.map2) == [:]
     }
 
 }
