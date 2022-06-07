@@ -25,7 +25,7 @@ protocol StoreKit2TransactionListenerDelegate: AnyObject {
 class StoreKit2TransactionListener {
 
     /// Similar to ``PurchaseResultData`` but with an optional `CustomerInfo`
-    typealias ResultData = (userCancelled: Bool, customerInfo: CustomerInfo?, transaction: SK2Transaction?)
+    typealias ResultData = (userCancelled: Bool, transaction: SK2Transaction?)
 
     private(set) var taskHandle: Task<Void, Never>?
     weak var delegate: StoreKit2TransactionListenerDelegate?
@@ -60,14 +60,14 @@ class StoreKit2TransactionListener {
         purchaseResult: StoreKit.Product.PurchaseResult
     ) async throws -> ResultData {
         switch purchaseResult {
-        case .success(let verificationResult):
-            let (transaction, customerInfo) = try await handle(transactionResult: verificationResult)
+        case let .success(verificationResult):
+            let transaction = try await self.handle(transactionResult: verificationResult)
 
-            return (false, customerInfo, transaction)
+            return (false, transaction)
         case .pending:
             throw ErrorUtils.paymentDeferredError()
         case .userCancelled:
-            return (true, nil, nil)
+            return (true, nil)
         @unknown default:
             throw ErrorUtils.storeProblemError(
                 withMessage: Strings.purchase.unknown_purchase_result(result: String(describing: purchaseResult))
@@ -84,7 +84,7 @@ private extension StoreKit2TransactionListener {
     /// - Throws: ``ErrorCode`` if the transaction fails to verify.
     func handle(
         transactionResult: VerificationResult<StoreKit.Transaction>
-    ) async throws -> (SK2Transaction, CustomerInfo?) {
+    ) async throws -> SK2Transaction {
         switch transactionResult {
         case let .unverified(unverifiedTransaction, verificationError):
             throw ErrorUtils.storeProblemError(
@@ -96,19 +96,20 @@ private extension StoreKit2TransactionListener {
             )
 
         case .verified(let verifiedTransaction):
-            let customerInfo = try await self.finish(transaction: verifiedTransaction)
+            await self.finish(transaction: verifiedTransaction)
 
-            return (verifiedTransaction, customerInfo)
+            return verifiedTransaction
         }
     }
 
     /// - Returns `nil` only if the delegate isn't set.
-    func finish(transaction: StoreKit.Transaction) async throws -> CustomerInfo? {
+    func finish(transaction: StoreKit.Transaction) async {
         await transaction.finish()
 
-        guard let delegate = self.delegate else { return nil }
-
-        return try await delegate.transactionsUpdated()
+//        guard let delegate = self.delegate else { return nil }
+//
+//        // TODO: don't always sync?
+//        return try await delegate.transactionsUpdated()
     }
 
 }
