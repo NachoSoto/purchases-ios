@@ -99,8 +99,9 @@ public extension SubscriptionPeriod {
 }
 
 extension SubscriptionPeriod {
-    func pricePerMonth(withTotalPrice price: Decimal) -> Decimal {
-        let periodsPerMonth: Decimal = {
+
+    var periodsPerMonth: Decimal {
+        return {
             switch self.unit {
             case .day: return 1 / 30
             case .week: return 1 / 4
@@ -108,9 +109,11 @@ extension SubscriptionPeriod {
             case .year: return 12
             }
         }() * Decimal(self.value)
+    }
 
+    func pricePerMonth(withTotalPrice price: Decimal) -> Decimal {
         return (price as NSDecimalNumber)
-            .dividing(by: periodsPerMonth as NSDecimalNumber,
+            .dividing(by: self.periodsPerMonth as NSDecimalNumber,
                       withBehavior: Self.roundingBehavior) as Decimal
     }
 
@@ -122,6 +125,7 @@ extension SubscriptionPeriod {
         raiseOnUnderflow: false,
         raiseOnDivideByZero: false
     )
+
 }
 
 extension SubscriptionPeriod.Unit: CustomDebugStringConvertible {

@@ -38,6 +38,11 @@
                BlueprintName = "BackendIntegrationTests"
                ReferencedContainer = "container:RevenueCat.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "SubscriberAttributesManagerIntegrationTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
