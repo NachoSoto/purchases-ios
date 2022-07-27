@@ -181,3 +181,29 @@ class ErrorCodeTests: TestCase {
     }
 
 }
+
+class ErrorUtilsTests: TestCase {
+
+    private var originalLogHandler: VerboseLogHandler!
+    private var loggedMessages: [(LogLevel, String)] = []
+
+    override func setUp() {
+        super.setUp()
+
+        self.originalLogHandler = Logger.logHandler
+        Logger.logHandler = { level, message, _, _, _ in
+            self.loggedMessages.append((level, message))
+        }
+    }
+
+    override func tearDown() {
+        Logger.logHandler = self.originalLogHandler
+
+        super.tearDown()
+    }
+
+    func testPurchaseErrorsAreLoggedAsApppleErrors() {
+
+    }
+
+}

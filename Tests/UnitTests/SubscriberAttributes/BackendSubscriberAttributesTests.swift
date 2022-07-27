@@ -142,21 +142,27 @@ class BackendSubscriberAttributesTests: TestCase {
         expect(self.mockHTTPClient.calls).toEventually(haveCount(1))
     }
 
-    func testPostReceiptWithSubscriberAttributesPassesErrorsToCallbackIfStatusCodeIsSuccess() throws {
-        let attributeErrors = [
+    // TODO: what if status code is 400?
+    // TODO: rename snapshot file
+    func testPostReceiptWithSubscriberAttributesPassesCustomerInfoIfStatusCodeIsSuccess() throws {
+        let attributeError = "email is not in valid format"
+
+        let attributeErrors: [String: Any] = [
             ErrorDetails.attributeErrorsKey: [
                 [
                     "key_name": "$email",
-                    "message": "email is not in valid format"
+                    "message": attributeError
                 ]
-            ]
+            ],
+            "code": BackendErrorCode.invalidSubscriberAttributes.rawValue,
+            "message": "Some subscriber attributes keys were unable to be saved."
         ]
 
         self.mockHTTPClient.mock(
             requestPath: .postReceiptData,
             response: .init(
                 statusCode: .success,
-                response: validSubscriberResponse + [ErrorDetails.attributeErrorsResponseKey: attributeErrors]
+                response: self.validSubscriberResponse + [ErrorDetails.attributeErrorsResponseKey: attributeErrors]
             )
         )
 
@@ -164,7 +170,16 @@ class BackendSubscriberAttributesTests: TestCase {
             subscriberAttribute1.key: subscriberAttribute1,
             subscriberAttribute2.key: subscriberAttribute2
         ]
-        var receivedError: BackendError?
+
+        var loggedMessages = [String]()
+        let originalLogHandler = Logger.logHandler
+        defer { Logger.logHandler = originalLogHandler }
+
+        Logger.logHandler = { _, message, _, _, _ in
+            loggedMessages.append(message)
+        }
+
+        var receivedCustomerInfo: CustomerInfo?
         backend.post(receiptData: receiptData,
                      appUserID: appUserID,
                      isRestore: false,
@@ -172,19 +187,26 @@ class BackendSubscriberAttributesTests: TestCase {
                      presentedOfferingIdentifier: nil,
                      observerMode: false,
                      subscriberAttributes: subscriberAttributesByKey) { result in
-            receivedError = result.error
+            receivedCustomerInfo = result.value
         }
 
         expect(self.mockHTTPClient.calls).toEventually(haveCount(1))
 
-        expect(receivedError).toNot(beNil())
-        expect(receivedError?.successfullySynced) == true
-        expect((receivedError?.asPurchasesError as NSError?)?.subscriberAttributesErrors) == [
-            "$email": "email is not in valid format"
-        ]
+        expect(receivedCustomerInfo) == CustomerInfo(testData: self.validSubscriberResponse)
+        expect(loggedMessages).to(
+            containElementSatisfying {
+                $0.localizedCaseInsensitiveContains(ErrorCode.invalidSubscriberAttributesError.description)
+            },
+            description: "ErrorCode description must have been logged"
+        )
+        expect(loggedMessages).to(
+            containElementSatisfying { $0.localizedCaseInsensitiveContains(attributeError.description) },
+            description: "Attribute errors must have been logged. Logged messages: \(loggedMessages)"
+        )
     }
 
     // MARK: PostSubscriberAttributes
+
     func testPostSubscriberAttributesSendsRightParameters() throws {
         backend.post(subscriberAttributes: [
             subscriberAttribute1.key: subscriberAttribute1,

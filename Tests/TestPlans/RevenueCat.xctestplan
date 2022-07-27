@@ -18,7 +18,7 @@
       "target" : {
         "containerPath" : "container:RevenueCat.xcodeproj",
         "identifier" : "2DC5621D24EC63430031F69B",
-        "name" : "RevenueCatTests"
+        "name" : "UnitTests"
       }
     }
   ],
