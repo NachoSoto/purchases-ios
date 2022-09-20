@@ -10,10 +10,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RCPurchasesDelegate;
+@protocol RCPurchasesType;
 
 @interface RCPurchasesAPI<RCPurchasesDelegate> : NSObject
 
 + (void)checkAPI;
++ (void)checkAPI:(id<RCPurchasesType>)purchases;
 + (void)checkEnums;
 + (void)checkConstants;
 

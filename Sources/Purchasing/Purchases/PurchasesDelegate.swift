@@ -33,7 +33,7 @@ import Foundation
     @available(tvOS, obsoleted: 1)
     @available(watchOS, obsoleted: 1)
     @objc(purchases:didReceiveUpdatedPurchaserInfo:)
-    optional func purchases(_ purchases: Purchases, didReceiveUpdated purchaserInfo: CustomerInfo)
+    optional func purchases(_ purchases: PurchasesType, didReceiveUpdated purchaserInfo: CustomerInfo)
 
     /**
      * Called whenever ``Purchases`` receives updated customer info. This may happen periodically
@@ -42,7 +42,7 @@ import Foundation
      * - Parameter customerInfo: Updated ``CustomerInfo``
      */
     @objc(purchases:receivedUpdatedCustomerInfo:)
-    optional func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo)
+    optional func purchases(_ purchases: PurchasesType, receivedUpdated customerInfo: CustomerInfo)
 
     /**
      * Called when a user initiates a promotional in-app purchase from the App Store.
@@ -62,7 +62,7 @@ import Foundation
      * ### Related Articles:
      * - [Apple Documentation](https://rev.cat/testing-promoted-in-app-purchases)
      */
-    @objc optional func purchases(_ purchases: Purchases,
+    @objc optional func purchases(_ purchases: PurchasesType,
                                   readyForPromotedProduct product: StoreProduct,
                                   purchase startPurchase: @escaping StartPurchaseBlock)
 
@@ -72,7 +72,7 @@ import Foundation
     @available(macOS, obsoleted: 1, renamed: "purchases(_:readyForPromotedProduct:purchase:)")
     @available(macCatalyst, obsoleted: 1, renamed: "purchases(_:readyForPromotedProduct:purchase:)")
     // swiftlint:disable:next missing_docs
-    @objc optional func purchases(_ purchases: Purchases,
+    @objc optional func purchases(_ purchases: PurchasesType,
                                   shouldPurchasePromoProduct product: StoreProduct,
                                   defermentBlock makeDeferredPurchase: @escaping StartPurchaseBlock)
 

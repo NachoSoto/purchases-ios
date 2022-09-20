@@ -21,7 +21,7 @@ RCLogLevel logLevel;
 NSURL *proxyURL;
 BOOL forceUniversalAppStore;
 BOOL simulatesAskToBuyInSandbox;
-RCPurchases *sharedPurchases;
+id<RCPurchasesType> sharedPurchases;
 BOOL isConfigured;
 BOOL allowSharingAppStoreAccount;
 BOOL finishTransactions;
@@ -30,7 +30,7 @@ NSString *appUserID;
 BOOL isAnonymous;
 
 + (void)checkAPI {
-    RCPurchases *p = [RCPurchases configureWithAPIKey:@""];
+    [RCPurchases configureWithAPIKey:@""];
     [RCPurchases configureWithConfiguration:[[RCConfiguration builderWithAPIKey:@""] build]];
     [RCPurchases configureWithConfigurationBuilder:[RCConfiguration builderWithAPIKey:@""]];
     [RCPurchases configureWithAPIKey:@"" appUserID:@""];
@@ -58,13 +58,13 @@ BOOL isAnonymous;
                         userDefaults:[[NSUserDefaults alloc] init]
              useStoreKit2IfAvailable:true
                    dangerousSettings:[[RCDangerousSettings alloc] init]];
-     [RCPurchases configureWithAPIKey:@""
-                            appUserID:nil
-                         observerMode:false
-                         userDefaults:[[NSUserDefaults alloc] init]
-              useStoreKit2IfAvailable:true
-                    dangerousSettings:[[RCDangerousSettings alloc] initWithAutoSyncPurchases:NO]];
-    
+    [RCPurchases configureWithAPIKey:@""
+                           appUserID:nil
+                        observerMode:false
+                        userDefaults:[[NSUserDefaults alloc] init]
+             useStoreKit2IfAvailable:true
+                   dangerousSettings:[[RCDangerousSettings alloc] initWithAutoSyncPurchases:NO]];
+
     [RCPurchases setLogHandler:^(RCLogLevel l, NSString *i) {}];
     canI = [RCPurchases canMakePayments];
     version = [RCPurchases frameworkVersion];
@@ -90,6 +90,10 @@ BOOL isAnonymous;
     sharedPurchases = [RCPurchases sharedPurchases];
     isConfigured = [RCPurchases isConfigured];
 
+    [self checkAPI:[RCPurchases configureWithAPIKey:@""]];
+}
+
++ (void)checkAPI:(id<RCPurchasesType>)p {
     // should have deprecation warning:
     // 'allowSharingAppStoreAccount' is deprecated: Configure behavior through the RevenueCat dashboard instead.
     allowSharingAppStoreAccount = [p allowSharingAppStoreAccount];

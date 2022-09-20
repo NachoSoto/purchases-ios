@@ -85,7 +85,7 @@ private func checkStaticMethods() {
     let proxyUrl: URL? = Purchases.proxyURL
     let forceUniversalAppStore: Bool = Purchases.forceUniversalAppStore
     let simulatesAskToBuyInSandbox: Bool = Purchases.simulatesAskToBuyInSandbox
-    let sharedPurchases: Purchases = Purchases.shared
+    let sharedPurchases: PurchasesType = Purchases.shared
     let isPurchasesConfigured: Bool = Purchases.isConfigured
 
     print(canI, version, logLevel, proxyUrl!, forceUniversalAppStore, simulatesAskToBuyInSandbox,
@@ -111,7 +111,7 @@ private func checkTypealiases(
           startPurchaseBlock)
 }
 
-private func checkPurchasesPurchasingAPI(purchases: Purchases) {
+private func checkPurchasesPurchasingAPI(purchases: PurchasesType) {
     purchases.getCustomerInfo { (_: CustomerInfo?, _: Error?) in }
     purchases.getCustomerInfo(fetchPolicy: .default) { (_: CustomerInfo?, _: Error?) in }
     purchases.getOfferings { (_: Offerings?, _: Error?) in }
@@ -153,12 +153,12 @@ private func checkPurchasesPurchasingAPI(purchases: Purchases) {
     purchases.delegate?.purchases?(purchases, readyForPromotedProduct: storeProduct, purchase: purchaseBlock)
 }
 
-private func checkIdentity(purchases: Purchases) {
+private func checkIdentity(purchases: PurchasesType) {
     purchases.logOut { (_: CustomerInfo?, _: Error?) in }
     purchases.logIn("") { (_: CustomerInfo?, _: Bool, _: Error?) in }
 }
 
-private func checkPurchasesSupportAPI(purchases: Purchases) {
+private func checkPurchasesSupportAPI(purchases: PurchasesType) {
     #if os(iOS)
     purchases.showManageSubscriptions { _ in }
     #endif
@@ -169,7 +169,7 @@ private func checkPurchasesSupportAPI(purchases: Purchases) {
 }
 
 @available(*, deprecated) // Ignore deprecation warnings
-private func checkPurchasesSubscriberAttributesAPI(purchases: Purchases) {
+private func checkPurchasesSubscriberAttributesAPI(purchases: PurchasesType) {
     purchases.setAttributes([String: String]())
     purchases.setEmail("")
     purchases.setPhoneNumber("")
@@ -195,7 +195,7 @@ private func checkPurchasesSubscriberAttributesAPI(purchases: Purchases) {
     purchases.collectDeviceIdentifiers()
 }
 
-private func checkAsyncMethods(purchases: Purchases) async {
+private func checkAsyncMethods(purchases: PurchasesType) async {
     let pack: Package! = nil
     let stp: StoreProduct! = nil
     let discount: StoreProductDiscount! = nil
@@ -239,7 +239,7 @@ private func checkAsyncMethods(purchases: Purchases) async {
     } catch {}
 }
 
-func checkNonAsyncMethods(_ purchases: Purchases) {
+func checkNonAsyncMethods(_ purchases: PurchasesType) {
     #if os(iOS)
     purchases.beginRefundRequest(forProduct: "") { (_: Result<RefundRequestStatus, Error>) in }
     purchases.beginRefundRequest(forEntitlement: "") { (_: Result<RefundRequestStatus, Error>) in }

@@ -12,7 +12,7 @@ public class MockPurchasesDelegate: NSObject, PurchasesDelegate {
     var customerInfo: CustomerInfo?
     var customerInfoReceivedCount = 0
 
-    public func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
+    public func purchases(_ purchases: PurchasesType, receivedUpdated customerInfo: CustomerInfo) {
         customerInfoReceivedCount += 1
         self.customerInfo = customerInfo
     }
@@ -20,7 +20,7 @@ public class MockPurchasesDelegate: NSObject, PurchasesDelegate {
     var promoProduct: StoreProduct?
     var makeDeferredPurchase: StartPurchaseBlock?
 
-    public func purchases(_ purchases: Purchases,
+    public func purchases(_ purchases: PurchasesType,
                           readyForPromotedProduct product: StoreProduct,
                           purchase startPurchase: @escaping StartPurchaseBlock) {
         promoProduct = product
