@@ -20,6 +20,8 @@ class StoreKit2IntegrationTests: StoreKit1IntegrationTests {
 
 }
 
+// TODO: add another class for health request
+
 class StoreKit1IntegrationTests: BaseBackendIntegrationTests {
 
     private var testSession: SKTestSession!

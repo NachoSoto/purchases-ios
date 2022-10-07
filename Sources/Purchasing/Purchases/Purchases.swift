@@ -1055,6 +1055,11 @@ internal extension Purchases {
 
     #if DEBUG
 
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
+    func healthRequest() async throws {
+        try await self.backend.healthRequest()
+    }
+
     /// - Returns: the parsed `AppleReceipt`
     ///
     /// - Warning: this is only meant for integration tests, as a way to debug purchase failures.

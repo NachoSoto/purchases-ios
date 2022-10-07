@@ -30,6 +30,13 @@ NSString *appUserID;
 BOOL isAnonymous;
 
 + (void)checkAPI {
+    // TODO:
+    // - Debug only
+    // - Add to Swift too
+//    [[RCSDKTester default] testWithCompletion:^(NSError * _Nullable) {
+//
+//    }];
+
     RCPurchases *p = [RCPurchases configureWithAPIKey:@""];
     [RCPurchases configureWithConfiguration:[[RCConfiguration builderWithAPIKey:@""] build]];
     [RCPurchases configureWithConfigurationBuilder:[RCConfiguration builderWithAPIKey:@""]];
