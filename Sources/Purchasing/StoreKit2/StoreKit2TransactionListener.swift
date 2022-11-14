@@ -98,8 +98,12 @@ private extension StoreKit2TransactionListener {
                 error: verificationError
             )
 
-        case .verified(let verifiedTransaction):
+        case let .verified(verifiedTransaction):
             if fromTransactionUpdate { // Otherwise transaction will be finished by `PurchasesOrchestrator`
+                Logger.purchase(Strings.purchase.finishing_transaction(
+                    StoreTransaction(sk2Transaction: verifiedTransaction)
+                ))
+
                 await verifiedTransaction.finish()
             }
 

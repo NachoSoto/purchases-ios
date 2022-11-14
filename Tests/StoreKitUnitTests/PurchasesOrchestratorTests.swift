@@ -523,7 +523,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
     func testStoreKit2TransactionListenerDelegateWithObserverMode() async throws {
         try AvailabilityChecks.iOS15APIAvailableOrSkipTest()
 
-        try setUpSystemInfo(finishTransactions: false)
+        try setUpSystemInfo(finishTransactions: false, storeKit2Setting: .enabledForCompatibleDevices)
         setUpOrchestrator()
 
         backend.stubbedPostReceiptResult = .success(mockCustomerInfo)
