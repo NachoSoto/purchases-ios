@@ -126,7 +126,7 @@ final class PurchasesOrchestrator {
         storeKit2StorefrontListener.delegate = self
 
         if systemInfo.storeKit2Setting == .enabledForCompatibleDevices {
-            storeKit2TransactionListener.listenForTransactions()
+//            storeKit2TransactionListener.listenForTransactions()
             storeKit2StorefrontListener.listenForStorefrontChanges()
         }
     }
