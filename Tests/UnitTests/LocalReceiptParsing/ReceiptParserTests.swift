@@ -3,6 +3,8 @@ import XCTest
 
 @testable import RevenueCat
 
+// TODO: move
+
 class ReceiptParserTests: TestCase {
     var receiptParser: ReceiptParser!
     var mockAppleReceiptBuilder: MockAppleReceiptBuilder!
