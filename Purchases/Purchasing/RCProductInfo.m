@@ -77,6 +77,8 @@ RCPaymentModeFromSKProductDiscountPaymentMode(SKProductDiscountPaymentMode payme
         dict[@"product_id"] = self.productIdentifier;
     }
 
+    dict[@"store_country"] = SKStorefront.description
+
     if (self.price) {
         dict[@"price"] = self.price;
     }

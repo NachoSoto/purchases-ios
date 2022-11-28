@@ -1694,7 +1694,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "scripts/swiftlint.sh\n";
+			shellScript = "#scripts/swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
