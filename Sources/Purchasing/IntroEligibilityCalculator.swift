@@ -15,13 +15,15 @@
 import Foundation
 import StoreKit
 
+import ReceiptParser
+
 class IntroEligibilityCalculator {
 
     private let productsManager: ProductsManagerType
-    private let receiptParser: ReceiptParser
+    private let receiptParser: ReceiptParser.ParserType
 
     init(productsManager: ProductsManagerType,
-         receiptParser: ReceiptParser) {
+         receiptParser: ReceiptParser.ParserType) {
         self.productsManager = productsManager
         self.receiptParser = receiptParser
     }

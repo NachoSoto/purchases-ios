@@ -13,11 +13,13 @@
 
 import StoreKit
 
+import ReceiptParser
+
 class TransactionsManager {
 
-    private let receiptParser: ReceiptParser
+    private let receiptParser: ReceiptParser.ParserType
 
-    init(receiptParser: ReceiptParser) {
+    init(receiptParser: ReceiptParser.ParserType) {
         self.receiptParser = receiptParser
     }
 

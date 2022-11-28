@@ -25,5 +25,8 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/**/*.swift'
   
-  
+  # TODO: this won't lint when making a release because
+  # this version won't exist. Should we remove the version?
+  s.dependency 'ReceiptParser', "#{s.version.to_s}"
+
 end
