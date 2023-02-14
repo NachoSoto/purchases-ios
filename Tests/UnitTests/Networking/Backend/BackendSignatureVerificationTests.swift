@@ -19,6 +19,10 @@ import XCTest
 
 class BackendSignatureVerificationTests: BaseBackendTests {
 
+    override var validationMode: Configuration.EntitlementVerificationLevel {
+        return .informationOnly
+    }
+
     override func createClient() -> MockHTTPClient {
         super.createClient(#file)
     }

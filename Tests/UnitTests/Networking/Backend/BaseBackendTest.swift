@@ -34,7 +34,11 @@ class BaseBackendTests: TestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        self.systemInfo = try SystemInfo(platformInfo: nil, finishTransactions: true)
+        self.systemInfo = try SystemInfo(
+            platformInfo: nil,
+            finishTransactions: true,
+            responseVerificationLevel: try self.responseVerificationLevel
+        )
         self.httpClient = self.createClient()
         self.operationDispatcher = MockOperationDispatcher()
 
@@ -57,6 +61,10 @@ class BaseBackendTests: TestCase {
                                internalAPI: self.internalAPI)
     }
 
+    var validationMode: Configuration.EntitlementVerificationLevel {
+        return .disabled
+    }
+
     func createClient() -> MockHTTPClient {
         XCTFail("\(#function) must be overriden by subclasses")
         return self.createClient(#file)
@@ -73,6 +81,16 @@ extension BaseBackendTests {
                               systemInfo: self.systemInfo,
                               eTagManager: eTagManager,
                               sourceTestFile: file)
+    }
+
+    private var responseVerificationLevel: Signing.ResponseVerificationLevel {
+        get throws {
+            if #available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *) {
+                return try Signing.verificationLevel(with: self.validationMode)
+            } else {
+                return .disabled
+            }
+        }
     }
 
 }
