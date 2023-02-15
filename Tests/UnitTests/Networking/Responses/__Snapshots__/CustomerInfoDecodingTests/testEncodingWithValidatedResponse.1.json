@@ -1,5 +1,5 @@
 {
-  "entitlement_validation" : 0,
+  "entitlement_validation" : 1,
   "request_date" : 668454178,
   "schema_version" : "3",
   "subscriber" : {

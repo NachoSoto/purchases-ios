@@ -142,6 +142,16 @@ class CustomerInfoDecodingTests: BaseHTTPResponseTest {
         assertSnapshot(matching: self.customerInfo, as: .backwardsCompatibleFormattedJson)
     }
 
+    func testEncodingWithValidatedResponse() {
+        assertSnapshot(matching: self.customerInfo.copy(with: .validated),
+                       as: .backwardsCompatibleFormattedJson)
+    }
+
+    func testEncodingWithFailedValidationResponse() {
+        assertSnapshot(matching: self.customerInfo.copy(with: .failedValidation),
+                       as: .backwardsCompatibleFormattedJson)
+    }
+
 }
 
 class CustomerInfoVersion2DecodingTests: BaseHTTPResponseTest {
@@ -209,6 +219,25 @@ class CustomerInfoVersion2DecodingTests: BaseHTTPResponseTest {
 
     func testReencoding() {
         expect(try self.customerInfo.encodeAndDecode()) == self.customerInfo
+    }
+
+    func testDecodingDefaultsToEntitlementsNotValidated() {
+        expect(self.customerInfo.entitlementValidation) == .notValidated
+        expect(self.customerInfo.entitlements.validation) == .notValidated
+    }
+
+    func testValidationIsEncoded() throws {
+        let reencoded = try self.customerInfo.copy(with: .validated).encodeAndDecode()
+
+        expect(reencoded.entitlementValidation) == .validated
+        expect(reencoded.entitlements.validation) == .validated
+    }
+
+    func testFailedValidationIsEncoded() throws {
+        let reencoded = try self.customerInfo.copy(with: .failedValidation).encodeAndDecode()
+
+        expect(reencoded.entitlementValidation) == .failedValidation
+        expect(reencoded.entitlements.validation) == .failedValidation
     }
 
 }

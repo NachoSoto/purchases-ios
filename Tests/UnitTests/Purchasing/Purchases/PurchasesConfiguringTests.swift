@@ -159,34 +159,34 @@ class PurchasesConfiguringTests: BasePurchasesTests {
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func testEntitlementVerificationLevelDisabledDoesNotSetPublicKey() throws {
+    func testEntitlementValidationModeDisabledDoesNotSetPublicKey() throws {
         try AvailabilityChecks.iOS13APIAvailableOrSkipTest()
 
         let purchases = Purchases.configure(
             with: try .init(withAPIKey: "")
-                .with(entitlementVerificationLevel: .disabled)
+                .with(entitlementValidationMode: .disabled)
         )
         expect(purchases.publicKey).to(beNil())
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func testEntitlementVerificationLevelInformationOnlySetsPublicKey() throws {
+    func testEntitlementValidationModeInformationOnlySetsPublicKey() throws {
         try AvailabilityChecks.iOS13APIAvailableOrSkipTest()
 
         let purchases = Purchases.configure(
             with: try .init(withAPIKey: "")
-                .with(entitlementVerificationLevel: .informationOnly)
+                .with(entitlementValidationMode: .informationOnly)
         )
         expect(purchases.publicKey).toNot(beNil())
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-    func testEntitlementVerificationLevelEnforcedSetsPublicKey() throws {
+    func testEntitlementValidationModeEnforcedSetsPublicKey() throws {
         try AvailabilityChecks.iOS13APIAvailableOrSkipTest()
 
         let purchases = Purchases.configure(
             with: try .init(withAPIKey: "")
-                .with(entitlementVerificationLevel: .enforced)
+                .with(entitlementValidationMode: .enforced)
         )
         expect(purchases.publicKey).toNot(beNil())
     }

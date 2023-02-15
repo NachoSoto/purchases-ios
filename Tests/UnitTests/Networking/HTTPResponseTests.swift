@@ -198,6 +198,12 @@ class ErrorResponseTests: TestCase {
         expect(result.attributeErrors).to(beEmpty())
     }
 
+    func testResponseValidationToEntitlementValidation() {
+        expect(HTTPResponseValidationResult.notRequested.entitlementValidation) == .notValidated
+        expect(HTTPResponseValidationResult.validated.entitlementValidation) == .validated
+        expect(HTTPResponseValidationResult.failedValidation.entitlementValidation) == .failedValidation
+    }
+
 }
 
 private extension ErrorResponseTests {

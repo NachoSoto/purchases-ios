@@ -60,14 +60,14 @@ enum ErrorUtils {
     }
 
     /**
-     * Constructs an NSError with the ``ErrorCode/signatureVerificationFailed`` code.
+     * Constructs an NSError with the ``ErrorCode/signatureValidationFailed`` code.
      */
-    static func signatureVerificationFailedError(
+    static func signatureValidationFailedError(
         path: HTTPRequest.Path,
         fileName: String = #fileID, functionName: String = #function, line: UInt = #line
     ) -> PurchasesError {
         return error(
-            with: .signatureVerificationFailed,
+            with: .signatureValidationFailed,
             extraUserInfo: [
                 "request_path": path.relativePath
             ],
@@ -641,7 +641,7 @@ private extension ErrorUtils {
                 .apiEndpointBlockedError,
                 .invalidPromotionalOfferError,
                 .offlineConnectionError,
-                .signatureVerificationFailed:
+                .signatureValidationFailed:
                 Logger.error(
                     localizedDescription,
                     fileName: fileName,

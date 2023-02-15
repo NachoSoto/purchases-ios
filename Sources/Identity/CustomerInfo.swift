@@ -45,6 +45,12 @@ import Foundation
      */
     @objc public let nonSubscriptions: [NonSubscriptionTransaction]
 
+    /// Whether the entitlements were validation.
+    ///
+    /// ### Related Symbols
+    /// - ``EntitlementValidation``
+    @objc public var entitlementValidation: EntitlementValidation { self.entitlements.validation }
+
     /**
      * Returns the fetch date of this CustomerInfo.
      */
@@ -116,7 +122,8 @@ import Foundation
             return false
         }
 
-        return self.data.response == other.data.response
+        return (self.data.response == other.data.response &&
+                self.data.entitlementValidation == other.data.entitlementValidation)
     }
 
     public override var hash: Int {
@@ -155,8 +162,12 @@ import Foundation
     private let data: Contents
 
     /// Initializes a `CustomerInfo` with the underlying data in the current schema version
-    convenience init(response: CustomerInfoResponse, sandboxEnvironmentDetector: SandboxEnvironmentDetector) {
-        self.init(data: .init(response: response, schemaVersion: Self.currentSchemaVersion),
+    convenience init(response: CustomerInfoResponse,
+                     entitlementValidation: EntitlementValidation,
+                     sandboxEnvironmentDetector: SandboxEnvironmentDetector) {
+        self.init(data: .init(response: response,
+                              entitlementValidation: entitlementValidation,
+                              schemaVersion: Self.currentSchemaVersion),
                   sandboxEnvironmentDetector: sandboxEnvironmentDetector)
     }
 
@@ -178,7 +189,8 @@ import Foundation
             entitlements: subscriber.entitlements,
             purchases: subscriber.allPurchasesByProductId,
             requestDate: response.requestDate,
-            sandboxEnvironmentDetector: sandboxEnvironmentDetector
+            sandboxEnvironmentDetector: sandboxEnvironmentDetector,
+            validation: data.entitlementValidation
         )
         self.nonSubscriptions = TransactionsFactory.nonSubscriptionTransactions(
             withSubscriptionsData: subscriber.nonSubscriptions
@@ -225,6 +237,17 @@ extension CustomerInfo {
         "2",
         CustomerInfo.currentSchemaVersion
     ]
+
+}
+
+extension CustomerInfo {
+
+    /// Creates a copy of this ``CustomerInfo`` modifying only the ``EntitlementValidation``.
+    func copy(with entitlementValidation: EntitlementValidation) -> Self {
+        var copy = self.data
+        copy.entitlementValidation = entitlementValidation
+        return .init(data: copy)
+    }
 
 }
 
@@ -277,10 +300,14 @@ private extension CustomerInfo {
     struct Contents {
 
         var response: CustomerInfoResponse
+        var entitlementValidation: EntitlementValidation
         var schemaVersion: String?
 
-        init(response: CustomerInfoResponse, schemaVersion: String?) {
+        init(response: CustomerInfoResponse,
+             entitlementValidation: EntitlementValidation,
+             schemaVersion: String?) {
             self.response = response
+            self.entitlementValidation = entitlementValidation
             self.schemaVersion = schemaVersion
         }
 
@@ -295,6 +322,7 @@ extension CustomerInfo.Contents: Codable {
     private enum CodingKeys: String, CodingKey {
 
         case response
+        case entitlementValidation
         case schemaVersion
 
     }
@@ -303,6 +331,7 @@ extension CustomerInfo.Contents: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try self.response.encode(to: encoder)
+        try container.encode(self.entitlementValidation, forKey: .entitlementValidation)
         // Always use current schema version when encoding
         try container.encode(CustomerInfo.currentSchemaVersion, forKey: .schemaVersion)
     }
@@ -311,6 +340,10 @@ extension CustomerInfo.Contents: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.response = try CustomerInfoResponse(from: decoder)
+        self.entitlementValidation = try container.decodeIfPresent(
+            EntitlementValidation.self,
+            forKey: .entitlementValidation
+        ) ?? .notValidated
         self.schemaVersion = try container.decodeIfPresent(String.self, forKey: .schemaVersion)
     }
 

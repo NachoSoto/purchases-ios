@@ -627,6 +627,60 @@ class BackendPostReceiptDataTests: BaseBackendTests {
         expect(completionCalled).toEventually(equal(2))
     }
 
+    func testGetsEntitlementsWithValidatedResponse() {
+        self.httpClient.mock(
+            requestPath: .postReceiptData,
+            response: .init(statusCode: .success,
+                            response: Self.validCustomerResponse,
+                            validationResult: .validated)
+        )
+
+        let result = waitUntilValue { completed in
+            self.backend.post(receiptData: Self.receiptData,
+                              appUserID: Self.userID,
+                              isRestore: false,
+                              productData: nil,
+                              presentedOfferingIdentifier: nil,
+                              observerMode: false,
+                              initiationSource: .purchase,
+                              subscriberAttributes: nil,
+                              completion: { result in
+                completed(result)
+            })
+        }
+
+        expect(result).to(beSuccess())
+        expect(result?.value?.entitlementValidation) == .validated
+        expect(result?.value?.entitlements.validation) == .validated
+    }
+
+    func testGetsEntitlementsWithFailedValidation() {
+        self.httpClient.mock(
+            requestPath: .postReceiptData,
+            response: .init(statusCode: .success,
+                            response: Self.validCustomerResponse,
+                            validationResult: .failedValidation)
+        )
+
+        let result = waitUntilValue { completed in
+            self.backend.post(receiptData: Self.receiptData,
+                              appUserID: Self.userID,
+                              isRestore: false,
+                              productData: nil,
+                              presentedOfferingIdentifier: nil,
+                              observerMode: false,
+                              initiationSource: .purchase,
+                              subscriberAttributes: nil,
+                              completion: { result in
+                completed(result)
+            })
+        }
+
+        expect(result).to(beSuccess())
+        expect(result?.value?.entitlementValidation) == .failedValidation
+        expect(result?.value?.entitlements.validation) == .failedValidation
+    }
+
 }
 
 private extension BackendPostReceiptDataTests {

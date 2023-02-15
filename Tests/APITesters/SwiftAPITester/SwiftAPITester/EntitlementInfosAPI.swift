@@ -21,6 +21,7 @@ func checkEntitlementInfosAPI() {
     let activeInAnyEnvironment: [String: EntitlementInfo] = eis.activeInAnyEnvironment
     let activeInCurrentEnvironment: [String: EntitlementInfo] = eis.activeInCurrentEnvironment
     let enti: EntitlementInfo? = eis[""]
+    let validation: EntitlementValidation = eis.validation
 
-    print(eis!, all, active, activeInAnyEnvironment, activeInCurrentEnvironment, enti!)
+    print(eis!, all, active, activeInAnyEnvironment, activeInCurrentEnvironment, enti!, validation)
 }

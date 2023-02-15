@@ -168,8 +168,8 @@ class ErrorCodeTests: TestCase {
                                               expectedRawValue: 35)
     }
 
-    func testSignatureVerificationFailedError() {
-        ensureEnumCaseMatchesExpectedRawValue(errorCode: .signatureVerificationFailed,
+    func testSignatureValidationFailedError() {
+        ensureEnumCaseMatchesExpectedRawValue(errorCode: .signatureValidationFailed,
                                               expectedRawValue: 36)
     }
 

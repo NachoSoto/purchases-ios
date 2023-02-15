@@ -37,7 +37,7 @@ class BaseBackendTests: TestCase {
         self.systemInfo = try SystemInfo(
             platformInfo: nil,
             finishTransactions: true,
-            responseVerificationLevel: try self.responseVerificationLevel
+            responseValidationMode: try self.responseValidationMode
         )
         self.httpClient = self.createClient()
         self.operationDispatcher = MockOperationDispatcher()
@@ -61,7 +61,7 @@ class BaseBackendTests: TestCase {
                                internalAPI: self.internalAPI)
     }
 
-    var validationMode: Configuration.EntitlementVerificationLevel {
+    var validationMode: Configuration.EntitlementValidationMode {
         return .disabled
     }
 
@@ -83,10 +83,10 @@ extension BaseBackendTests {
                               sourceTestFile: file)
     }
 
-    private var responseVerificationLevel: Signing.ResponseVerificationLevel {
+    private var responseValidationMode: Signing.ResponseValidationMode {
         get throws {
             if #available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *) {
-                return try Signing.verificationLevel(with: self.validationMode)
+                return try Signing.validationMode(with: self.validationMode)
             } else {
                 return .disabled
             }

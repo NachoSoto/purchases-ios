@@ -15,15 +15,15 @@
 
 final class MockSigning: SigningType {
 
-    struct VerificationRequest {
+    struct ValidationRequest {
         let message: Data
         let nonce: Data
         let signature: String
         let publicKey: Signing.PublicKey
     }
 
-    static var requests: [VerificationRequest] = []
-    static var stubbedVerificationResult: Bool?
+    static var requests: [ValidationRequest] = []
+    static var stubbedValidationResult: Bool?
 
     static func verify(
         message: Data,
@@ -38,12 +38,12 @@ final class MockSigning: SigningType {
             publicKey: publicKey
         ))
 
-        return Self.stubbedVerificationResult!
+        return Self.stubbedValidationResult!
     }
 
     static func resetData() {
         self.requests.removeAll()
-        self.stubbedVerificationResult = nil
+        self.stubbedValidationResult = nil
     }
 
 }

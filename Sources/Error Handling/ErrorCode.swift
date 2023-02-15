@@ -57,7 +57,7 @@ import Foundation
     @objc(RCAPIEndpointBlocked) case apiEndpointBlockedError = 33
     @objc(RCInvalidPromotionalOfferError) case invalidPromotionalOfferError = 34
     @objc(RCOfflineConnectionError) case offlineConnectionError = 35
-    @objc(RCSignatureVerificationFailed) case signatureVerificationFailed = 36
+    @objc(RCSignatureValidationFailed) case signatureValidationFailed = 36
 
     // swiftlint:enable missing_docs
 
@@ -175,8 +175,8 @@ extension ErrorCode: DescribableError {
         case .offlineConnectionError:
             return "Error performing request because the internet connection appears to be offline."
 
-        case .signatureVerificationFailed:
-            return "Request failed signature verification."
+        case .signatureValidationFailed:
+            return "Request failed signature validation."
 
         @unknown default:
             return "Something went wrong."
@@ -274,8 +274,8 @@ extension ErrorCode {
             return "INVALID_PROMOTIONAL_OFFER_ERROR"
         case .offlineConnectionError:
             return "OFFLINE_CONNECTION_ERROR"
-        case .signatureVerificationFailed:
-            return "SIGNATURE_VERIFICATION_FAILED"
+        case .signatureValidationFailed:
+            return "SIGNATURE_VALIDATION_FAILED"
         @unknown default:
             return "UNRECOGNIZED_ERROR"
         }

@@ -19,7 +19,7 @@ import XCTest
 
 class BackendSignatureVerificationTests: BaseBackendTests {
 
-    override var validationMode: Configuration.EntitlementVerificationLevel {
+    override var validationMode: Configuration.EntitlementValidationMode {
         return .informationOnly
     }
 
@@ -50,7 +50,7 @@ class BackendSignatureVerificationTests: BaseBackendTests {
             self.internalAPI.healthRequest(signatureVerification: true, completion: completed)
         }
 
-        expect(error).to(matchError(BackendError.networkError(.signatureVerificationFailed(path: .health))))
+        expect(error).to(matchError(BackendError.networkError(.signatureValidationFailed(path: .health))))
     }
 
 }

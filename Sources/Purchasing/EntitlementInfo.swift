@@ -161,6 +161,9 @@ extension PeriodType: DefaultValueProvider {
      */
     @objc public var ownershipType: PurchaseOwnershipType { self.contents.ownershipType }
 
+    /// Whether this entitlement was validated.
+    @objc public var validation: EntitlementValidation { self.contents.validation }
+
     // Docs inherited from protocol
     // swiftlint:disable:next missing_docs
     @objc public let rawData: [String: Any]
@@ -182,7 +185,8 @@ extension PeriodType: DefaultValueProvider {
             isSandbox=\(self.isSandbox),
             unsubscribeDetectedAt=\(String(describing: self.unsubscribeDetectedAt)),
             billingIssueDetectedAt=\(String(describing: self.billingIssueDetectedAt)),
-            ownershipType=\(self.ownershipType)
+            ownershipType=\(self.ownershipType),
+            validationt=\(self.validation)
             >
             """
     }
@@ -211,6 +215,7 @@ extension PeriodType: DefaultValueProvider {
         entitlement: CustomerInfoResponse.Entitlement,
         subscription: CustomerInfoResponse.Subscription,
         sandboxEnvironmentDetector: SandboxEnvironmentDetector,
+        validation: EntitlementValidation,
         requestDate: Date?
     ) {
         self.contents = .init(
@@ -323,6 +328,7 @@ private extension EntitlementInfo {
         let unsubscribeDetectedAt: Date?
         let billingIssueDetectedAt: Date?
         let ownershipType: PurchaseOwnershipType
+        let validation: EntitlementValidation = .notValidated
 
     }
 

@@ -92,7 +92,7 @@ class PurchasesDiagnosticsTests: TestCase {
     }
 
     func testFailingSignatureVerification() async throws {
-        let expectedError = ErrorUtils.signatureVerificationFailedError(path: .health)
+        let expectedError = ErrorUtils.signatureValidationFailedError(path: .health)
         self.purchases.mockedHealthRequestWithSignatureVerificationResponse = .failure(expectedError.asPublicError)
 
         do {

@@ -23,4 +23,7 @@ func checkConfigurationAPI() {
         .with(platformInfo: Purchases.PlatformInfo(flavor: "", version: ""))
         .build()
     print(configuration)
+
+    let _: Configuration.Builder = try! Configuration.builder(withAPIKey: "")
+        .with(entitlementValidationMode: .enforced)
 }

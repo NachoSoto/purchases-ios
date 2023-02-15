@@ -86,7 +86,7 @@ extension Result where Success == Data?, Failure == NetworkError {
         response: HTTPURLResponse,
         request: HTTPRequest,
         signing: SigningType.Type,
-        verificationLevel: Signing.ResponseVerificationLevel
+        validationMode: Signing.ResponseValidationMode
     ) -> Result<HTTPResponse<Data?>, Failure> {
         return self.flatMap { body in
             if let body = body {
@@ -94,12 +94,12 @@ extension Result where Success == Data?, Failure == NetworkError {
                     with: response,
                     body: body,
                     request: request,
-                    publicKey: verificationLevel.publicKey,
+                    publicKey: validationMode.publicKey,
                     signing: signing
                 )
 
-                if response.validationResult == .failedValidation, case .enforced = verificationLevel {
-                    return .failure(.signatureVerificationFailed(path: request.path))
+                if response.validationResult == .failedValidation, case .enforced = validationMode {
+                    return .failure(.signatureValidationFailed(path: request.path))
                 } else {
                     return .success(response.mapBody(Optional.some))
                 }

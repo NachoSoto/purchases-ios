@@ -1158,7 +1158,7 @@ final class HTTPClientTests: BaseHTTPClientTests {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
+final class SignatureValidationHTTPClientTests: BaseHTTPClientTests {
 
     override func setUpWithError() throws {
         try AvailabilityChecks.iOS13APIAvailableOrSkipTest()
@@ -1167,7 +1167,7 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
     }
 
     func testRequestIncludesRandomNonce() throws {
-        let request = HTTPRequest.createWithResponseVerification(method: .get, path: .mockPath)
+        let request = HTTPRequest.createWithResponseValidation(method: .get, path: .mockPath)
 
         let headers: [String: String]? = waitUntilValue { completion in
             stub(condition: isPath(request.path)) { request in
@@ -1208,9 +1208,9 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         try self.changeClient(.informationOnly)
         self.mockResponse()
 
-        MockSigning.stubbedVerificationResult = true
+        MockSigning.stubbedValidationResult = true
 
-        let request: HTTPRequest = .createWithResponseVerification(method: .get, path: .mockPath)
+        let request: HTTPRequest = .createWithResponseValidation(method: .get, path: .mockPath)
         let response: HTTPResponse<Data>.Result? = waitUntilValue { completion in
             self.client.perform(request, completionHandler: completion)
         }
@@ -1225,15 +1225,15 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         )
     }
 
-    func testValidSignatureWithVerificationLevelInformationOnly() throws {
+    func testValidSignatureWithValidationModeInformationOnly() throws {
         let signature = "signature"
 
         try self.changeClient(.informationOnly)
         self.mockResponse(signature: signature)
 
-        MockSigning.stubbedVerificationResult = true
+        MockSigning.stubbedValidationResult = true
 
-        let request: HTTPRequest = .createWithResponseVerification(method: .get, path: .mockPath)
+        let request: HTTPRequest = .createWithResponseValidation(method: .get, path: .mockPath)
 
         let response: HTTPResponse<Data>.Result? = waitUntilValue { completion in
             self.client.perform(request, completionHandler: completion)
@@ -1263,14 +1263,14 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         expect(MockSigning.requests).to(beEmpty())
     }
 
-    func testValidSignatureWithVerificationLevelEnforced() throws {
+    func testValidSignatureWithValidationModeEnforced() throws {
         try self.changeClient(.enforced)
         self.mockResponse(signature: "signature")
 
-        MockSigning.stubbedVerificationResult = true
+        MockSigning.stubbedValidationResult = true
 
         let response: HTTPResponse<Data>.Result? = waitUntilValue { completion in
-            self.client.perform(.createWithResponseVerification(method: .get, path: .mockPath),
+            self.client.perform(.createWithResponseValidation(method: .get, path: .mockPath),
                                 completionHandler: completion)
         }
 
@@ -1279,16 +1279,16 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         expect(MockSigning.requests).to(haveCount(1))
     }
 
-    func testIncorrectSignatureWithVerificationLevelInformationOnlyReturnsResponse() throws {
+    func testIncorrectSignatureWithValidationModeInformationOnlyReturnsResponse() throws {
         let signature = "signature"
 
         try self.changeClient(.informationOnly)
         self.mockResponse(signature: signature)
 
-        MockSigning.stubbedVerificationResult = false
+        MockSigning.stubbedValidationResult = false
 
         let response: HTTPResponse<Data>.Result? = waitUntilValue { completion in
-            self.client.perform(.createWithResponseVerification(method: .get, path: .mockPath),
+            self.client.perform(.createWithResponseValidation(method: .get, path: .mockPath),
                                 completionHandler: completion)
         }
 
@@ -1297,21 +1297,21 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         expect(MockSigning.requests).to(haveCount(1))
     }
 
-    func testIncorrectSignatureWithVerificationLevelEnforcedReturnsError() throws {
+    func testIncorrectSignatureWithValidationModeEnforcedReturnsError() throws {
         let signature = "signature"
 
         try self.changeClient(.enforced)
         self.mockResponse(signature: signature)
 
-        MockSigning.stubbedVerificationResult = false
+        MockSigning.stubbedValidationResult = false
 
         let response: HTTPResponse<Data>.Result? = waitUntilValue { completion in
-            self.client.perform(.createWithResponseVerification(method: .get, path: .mockPath),
+            self.client.perform(.createWithResponseValidation(method: .get, path: .mockPath),
                                 completionHandler: completion)
         }
 
         expect(response).to(beFailure())
-        expect(response?.error).to(matchError(NetworkError.signatureVerificationFailed(path: .mockPath)))
+        expect(response?.error).to(matchError(NetworkError.signatureValidationFailed(path: .mockPath)))
     }
 
     func testAddNonceIfRequiredWithExistingNonce() throws {
@@ -1360,12 +1360,12 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         expect(request.nonce).toNot(beNil())
     }
 
-    private func changeClient(_ verificationLevel: Configuration.EntitlementVerificationLevel) throws {
-        let level = try Signing.verificationLevel(with: verificationLevel)
+    private func changeClient(_ validationMode: Configuration.EntitlementValidationMode) throws {
+        let level = try Signing.validationMode(with: validationMode)
 
         self.systemInfo = try MockSystemInfo(platformInfo: nil,
                                              finishTransactions: false,
-                                             responseVerificationLevel: level)
+                                             responseValidationMode: level)
         self.client = self.createClient()
     }
 

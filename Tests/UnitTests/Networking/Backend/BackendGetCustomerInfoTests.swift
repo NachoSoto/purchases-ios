@@ -68,6 +68,8 @@ class BackendGetCustomerInfoTests: BaseBackendTests {
         }
 
         expect(customerInfo).to(beSuccess())
+        expect(customerInfo?.value?.entitlementValidation) == .notValidated
+        expect(customerInfo?.value?.entitlements.validation) == .notValidated
     }
 
     func testEncodesCustomerUserID() {
@@ -148,12 +150,45 @@ class BackendGetCustomerInfoTests: BaseBackendTests {
 
         expect(self.httpClient.calls.map { $0.request.path }) == [path]
     }
+
+    func testGetCustomerInfoWithValidatedResponse() {
+        self.httpClient.mock(
+            requestPath: .getCustomerInfo(appUserID: Self.userID),
+            response: .init(statusCode: .success, response: Self.validCustomerResponse, validationResult: .validated)
+        )
+
+        let customerInfo = waitUntilValue { completed in
+            self.backend.getCustomerInfo(appUserID: Self.userID, withRandomDelay: false, completion: completed)
+        }
+
+        expect(customerInfo).to(beSuccess())
+        expect(customerInfo?.value?.entitlementValidation) == .validated
+        expect(customerInfo?.value?.entitlements.validation) == .validated
+    }
+
+    func testGetCustomerInfoWithFailedValidation() {
+        self.httpClient.mock(
+            requestPath: .getCustomerInfo(appUserID: Self.userID),
+            response: .init(statusCode: .success,
+                            response: Self.validCustomerResponse,
+                            validationResult: .failedValidation)
+        )
+
+        let customerInfo = waitUntilValue { completed in
+            self.backend.getCustomerInfo(appUserID: Self.userID, withRandomDelay: false, completion: completed)
+        }
+
+        expect(customerInfo).to(beSuccess())
+        expect(customerInfo?.value?.entitlementValidation) == .failedValidation
+        expect(customerInfo?.value?.entitlements.validation) == .failedValidation
+    }
+
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
 class BackendGetCustomerInfoSignatureTests: BaseBackendTests {
 
-    override var validationMode: Configuration.EntitlementVerificationLevel {
+    override var validationMode: Configuration.EntitlementValidationMode {
         return .informationOnly
     }
 

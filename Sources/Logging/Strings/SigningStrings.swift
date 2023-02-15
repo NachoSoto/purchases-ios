@@ -20,7 +20,7 @@ enum SigningStrings {
 
     case signature_not_base64(String)
 
-    case signature_failed_verification
+    case signature_failed_validation
 
     case signature_was_requested_but_not_provided(HTTPRequest)
 
@@ -36,7 +36,7 @@ extension SigningStrings: CustomStringConvertible {
         case let .signature_not_base64(signature):
             return "Signature is not base64: \(signature)"
 
-        case .signature_failed_verification:
+        case .signature_failed_validation:
             return "Signature failed validation"
 
         case let .signature_was_requested_but_not_provided(request):

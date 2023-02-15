@@ -64,6 +64,19 @@ extension HTTPResponse: CustomStringConvertible {
 
 }
 
+extension HTTPResponseValidationResult: CustomDebugStringConvertible {
+
+    var debugDescription: String {
+        let prefix = "\(type(of: self))"
+        switch self {
+        case .notRequested: return prefix + ".notRequested"
+        case .validated: return prefix + ".validated"
+        case .failedValidation: return prefix + ".failedValidation"
+        }
+    }
+
+}
+
 extension HTTPResponse where Body: OptionalType, Body.Wrapped: HTTPResponseBody {
 
     /// Converts a `HTTPResponse<Body?>` into a `HTTPResponse<Body>?`

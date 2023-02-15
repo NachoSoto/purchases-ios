@@ -25,7 +25,7 @@ enum NetworkError: Swift.Error, Equatable {
     case unableToCreateRequest(HTTPRequest.Path, Source)
     case unexpectedResponse(URLResponse?, Source)
     case errorResponse(ErrorResponse, HTTPStatusCode, Source)
-    case signatureVerificationFailed(HTTPRequest.Path, Source)
+    case signatureValidationFailed(HTTPRequest.Path, Source)
 
 }
 
@@ -87,11 +87,11 @@ extension NetworkError {
         return .errorResponse(response, statusCode, .init(file: file, function: function, line: line))
     }
 
-    static func signatureVerificationFailed(
+    static func signatureValidationFailed(
         path: HTTPRequest.Path,
         file: String = #fileID, function: String = #function, line: UInt = #line
     ) -> Self {
-        return .signatureVerificationFailed(
+        return .signatureValidationFailed(
             path,
             .init(file: file, function: function, line: line)
         )
@@ -161,8 +161,8 @@ extension NetworkError: PurchasesErrorConvertible {
                                            function: source.function,
                                            line: source.line)
 
-        case let .signatureVerificationFailed(path, source):
-            return ErrorUtils.signatureVerificationFailedError(
+        case let .signatureValidationFailed(path, source):
+            return ErrorUtils.signatureValidationFailedError(
                 path: path,
                 fileName: source.file,
                 functionName: source.function,
@@ -203,7 +203,7 @@ extension NetworkError {
              .dnsError,
              .unableToCreateRequest,
              .unexpectedResponse,
-             .signatureVerificationFailed:
+             .signatureValidationFailed:
             return nil
         }
     }

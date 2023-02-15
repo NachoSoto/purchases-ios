@@ -31,8 +31,15 @@ import Foundation
         return self.all[key]
     }
 
+    /// Whether these entitlements were validated.
+    @objc public let validation: EntitlementValidation
+
     public override var description: String {
-        return "<\(NSStringFromClass(Self.self)): self.all=\(self.all), self.active=\(self.active)>"
+        return "<\(NSStringFromClass(Self.self)): " +
+        "self.all=\(self.all), " +
+        "self.active=\(self.active)," +
+        "self.validation=\(self.validation)" +
+        ">"
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -45,8 +52,12 @@ import Foundation
 
     // MARK: -
 
-    init(entitlements: [String: EntitlementInfo]) {
+    init(
+        entitlements: [String: EntitlementInfo],
+        validation: EntitlementValidation
+    ) {
         self.all = entitlements
+        self.validation = validation
     }
 
     private func isEqual(to other: EntitlementInfos?) -> Bool {
@@ -58,7 +69,7 @@ import Foundation
             return true
         }
 
-        return self.all == other.all
+        return self.all == other.all && self.validation == other.validation
     }
 
 }
@@ -101,7 +112,8 @@ extension EntitlementInfos {
         entitlements: [String: CustomerInfoResponse.Entitlement],
         purchases: [String: CustomerInfoResponse.Subscription],
         requestDate: Date?,
-        sandboxEnvironmentDetector: SandboxEnvironmentDetector = BundleSandboxEnvironmentDetector.default
+        sandboxEnvironmentDetector: SandboxEnvironmentDetector = BundleSandboxEnvironmentDetector.default,
+        validation: EntitlementValidation
     ) {
         let allEntitlements: [String: EntitlementInfo] = .init(
             uniqueKeysWithValues: entitlements.compactMap { identifier, entitlement in
@@ -115,12 +127,13 @@ extension EntitlementInfos {
                                     entitlement: entitlement,
                                     subscription: subscription,
                                     sandboxEnvironmentDetector: sandboxEnvironmentDetector,
+                                    validation: validation,
                                     requestDate: requestDate)
                 )
             }
         )
 
-        self.init(entitlements: allEntitlements)
+        self.init(entitlements: allEntitlements, validation: validation)
     }
 
 }

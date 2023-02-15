@@ -87,7 +87,7 @@ private final class HealthOperation: CacheableNetworkOperation {
 
         self.httpClient.perform(request) { (response: HTTPResponse<HTTPEmptyResponseBody>.Result) in
             if self.signatureVerification, response.value?.validationResult != .validated {
-                self.finish(with: .failure(.signatureVerificationFailed(path: request.path)), completion: completion)
+                self.finish(with: .failure(.signatureValidationFailed(path: request.path)), completion: completion)
             } else {
                 self.finish(with: response, completion: completion)
             }

@@ -142,7 +142,7 @@ class SigningTests: TestCase {
     }
 
     func testResponseValidationWithNoProvidedKey() throws {
-        let request = HTTPRequest.createWithResponseVerification(method: .get, path: .health)
+        let request = HTTPRequest.createWithResponseValidation(method: .get, path: .health)
         let response = HTTPResponse.create(with: Data(),
                                            statusCode: .success,
                                            headers: [:],
@@ -153,7 +153,7 @@ class SigningTests: TestCase {
     }
 
     func testResponseValidationWithNoSignatureInResponse() throws {
-        let request = HTTPRequest.createWithResponseVerification(method: .get, path: .health)
+        let request = HTTPRequest.createWithResponseValidation(method: .get, path: .health)
         let response = HTTPResponse.create(with: Data(),
                                            statusCode: .success,
                                            headers: [:],
@@ -164,7 +164,7 @@ class SigningTests: TestCase {
     }
 
     func testResponseValidationWithInvalidSignature() throws {
-        let request = HTTPRequest.createWithResponseVerification(method: .get, path: .health)
+        let request = HTTPRequest.createWithResponseValidation(method: .get, path: .health)
         let response = HTTPResponse.create(
             with: Data(),
             statusCode: .success,

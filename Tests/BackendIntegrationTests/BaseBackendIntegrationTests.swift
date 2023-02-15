@@ -93,7 +93,7 @@ private extension BaseBackendIntegrationTests {
                             observerMode: Self.observerMode,
                             userDefaults: self.userDefaults,
                             platformInfo: nil,
-                            responseVerificationLevel: try .enforced(Signing.loadPublicKey()),
+                            responseValidationMode: .default,
                             storeKit2Setting: Self.storeKit2Setting,
                             storeKitTimeout: Configuration.storeKitRequestTimeoutDefault,
                             networkTimeout: Configuration.networkTimeoutDefault,

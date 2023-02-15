@@ -29,9 +29,10 @@
     NSDate *uda = [ri unsubscribeDetectedAt];
     NSDate *bida = [ri billingIssueDetectedAt];
     RCPurchaseOwnershipType ot = [ri ownershipType];
+    RCEntitlementValidation val = [ri validation];
     NSDictionary<NSString *, id> *rawData = [ri rawData];
 
-    NSLog(i, ia, iaae, iace, ri, wr, pt, lpd, opd, ed, s, pi, is, uda, bida, ot, rawData);
+    NSLog(i, ia, iaae, iace, ri, wr, pt, lpd, opd, ed, s, pi, is, uda, bida, ot, val, rawData);
 }
 
 + (void)checkEnums {

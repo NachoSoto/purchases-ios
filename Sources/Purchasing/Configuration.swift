@@ -50,7 +50,7 @@ import Foundation
     let networkTimeout: TimeInterval
     let storeKit1Timeout: TimeInterval
     let platformInfo: Purchases.PlatformInfo?
-    let responseVerificationLevel: Signing.ResponseVerificationLevel
+    let responseValidationMode: Signing.ResponseValidationMode
 
     private init(with builder: Builder) {
         Self.verify(apiKey: builder.apiKey)
@@ -64,7 +64,7 @@ import Foundation
         self.storeKit1Timeout = builder.storeKit1Timeout
         self.networkTimeout = builder.networkTimeout
         self.platformInfo = builder.platformInfo
-        self.responseVerificationLevel = builder.responseVerificationLevel
+        self.responseValidationMode = builder.responseValidationMode
     }
 
     /// Factory method for the ``Configuration/Builder`` object that is required to create a `Configuration`
@@ -86,7 +86,7 @@ import Foundation
         private(set) var networkTimeout = Configuration.networkTimeoutDefault
         private(set) var storeKit1Timeout = Configuration.storeKitRequestTimeoutDefault
         private(set) var platformInfo: Purchases.PlatformInfo?
-        private(set) var responseVerificationLevel: Signing.ResponseVerificationLevel = .default
+        private(set) var responseValidationMode: Signing.ResponseValidationMode = .default
 
         /**
          * Create a new builder with your API key.
@@ -173,12 +173,17 @@ import Foundation
             return self
         }
 
-        /// Set ``Configuration/EntitlementVerificationLevel``
-        /// - Note: this requires iOS 13+
-        /// - Throws: ``ErrorCode/configurationError`` if the key cannot be loaded
+        /// Set ``Configuration/EntitlementValidationMode``.
+        /// Defaults to ``Configuration/EntitlementValidationMode/disabled``.
+        /// - Note: This requires iOS 13+
+        /// - Throws: ``ErrorCode/configurationError`` if the key cannot be loaded.
+        ///
+        /// ### Related Symbols
+        /// - ``Configuration/EntitlementValidationMode``
+        /// - ``EntitlementValidation``
         @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
-        @objc internal func with(entitlementVerificationLevel level: EntitlementVerificationLevel) throws -> Builder {
-            self.responseVerificationLevel = try Signing.verificationLevel(with: level)
+        @objc public func with(entitlementValidationMode mode: EntitlementValidationMode) throws -> Builder {
+            self.responseValidationMode = try Signing.validationMode(with: mode)
             return self
         }
 
@@ -207,19 +212,32 @@ import Foundation
 
 // MARK: - Public Keys
 
-internal extension Configuration {
+public extension Configuration {
 
-    /// Defines how strict ``EntitlementInfo`` verification ought to be.
-    @objc(RCEntitlementVerificationLevel)
-    enum EntitlementVerificationLevel: Int {
+    // TODO: link to docs
 
-        /// The SDK will perform no entitlement verification.
+    /// Defines how strict ``EntitlementInfo`` validation ought to be.
+    ///
+    /// ### Related Symbols
+    /// - ``EntitlementValidation``
+    /// - ``Configuration/Builder/with(entitlementValidationMode:)``
+    /// - ``EntitlementInfos/validation``
+    @objc(RCEntitlementValidationMode)
+    enum EntitlementValidationMode: Int {
+
+        /// The SDK will not perform any entitlement validation.
         case disabled = 0
 
-        /// The SDK will verify entitlements, but will not fail to parse them if verification failed.
+        /// Enable entitlement validation.
+        ///
+        /// If validation fails, this will be indicated with ``EntitlementValidation/failedValidation``
+        /// but parsing will not fail.
         case informationOnly = 1
 
-        /// The SDK will verify entitlements, and it will throw an error if verification failed.
+        /// Enable entitlement validation.
+        ///
+        /// If validation fails when fetching ``CustomerInfo`` and/or ``EntitlementInfos``
+        /// ``ErrorCode/signatureValidationFailed`` will be thrown.
         case enforced = 2
 
     }

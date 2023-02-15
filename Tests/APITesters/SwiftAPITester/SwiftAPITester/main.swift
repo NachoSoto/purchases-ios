@@ -20,8 +20,8 @@ func main() -> Int {
 
     checkEntitlementInfoAPI()
     checkEntitlementInfoEnums()
-
     checkEntitlementInfosAPI()
+    checkEntitlementValidationAPI()
 
     checkIntroEligibilityAPI()
     checkIntroEligibilityEnums()

@@ -19,8 +19,9 @@
     NSDictionary<NSString *, RCEntitlementInfo *> *activeInAnyEnvironment = ei.activeInAnyEnvironment;
     NSDictionary<NSString *, RCEntitlementInfo *> *activeInCurrentEnvironment = ei.activeInCurrentEnvironment;
     RCEntitlementInfo *e = [ei objectForKeyedSubscript:@""];
+    RCEntitlementValidation validation = ei.validation;
 
-    NSLog(ei, all, active, activeInAnyEnvironment, activeInCurrentEnvironment, e);
+    NSLog(ei, all, active, activeInAnyEnvironment, activeInCurrentEnvironment, e, validation);
 }
 
 @end
