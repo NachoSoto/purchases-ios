@@ -40,6 +40,7 @@ extension HTTPResponse where Body == Data {
             body: body,
             verificationResult: Self.verificationResult(
                 body: body,
+                statusCode: statusCode,
                 headers: headers,
                 request: request,
                 publicKey: publicKey,
@@ -48,8 +49,10 @@ extension HTTPResponse where Body == Data {
         )
     }
 
+    // swiftlint:disable:next function_parameter_count
     private static func verificationResult(
         body: Data,
+        statusCode: HTTPStatusCode,
         headers: HTTPClient.ResponseHeaders,
         request: HTTPRequest,
         publicKey: Signing.PublicKey?,
@@ -82,12 +85,15 @@ extension HTTPResponse where Body == Data {
         let eTag = HTTPResponse.value(forCaseInsensitiveHeaderField: HTTPClient.ResponseHeader.eTag.rawValue,
                                       in: headers)
 
-        if signing.verify(message: body,
-                          nonce: nonce,
-                          requestTime: requestTime,
-                          eTag: eTag,
-                          hasValidSignature: signature,
-                          with: publicKey) {
+        if signing.verify(signature: signature,
+                          with: .init(
+                            notModifiedResponse: statusCode == .notModified,
+                            message: body,
+                            nonce: nonce,
+                            requestTime: requestTime,
+                            eTag: eTag
+                          ),
+                          publicKey: publicKey) {
             return .verified
         } else {
             return .failed

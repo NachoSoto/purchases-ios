@@ -74,9 +74,10 @@ class SigningTests: TestCase {
         expect(Signing.verify(
             signature: signature,
             with: .init(
+                notModifiedResponse: false,
                 message: message.asData,
                 nonce: nonce.asData,
-                requestTime: 1677005916012,
+                requestTime: requestTime,
                 eTag: nil
             ),
             publicKey: Signing.loadPublicKey()
@@ -88,10 +89,13 @@ class SigningTests: TestCase {
     func testVerifySignatureWithInvalidSignature() throws {
         expect(Signing.verify(
             signature: "invalid signature".asData.base64EncodedString(),
-            with: .init(message: "Hello World".asData,
-                        nonce: "nonce".asData,
-                        requestTime: 1677005916012,
-                        eTag: nil),
+            with: .init(
+                notModifiedResponse: false,
+                message: "Hello World".asData,
+                nonce: "nonce".asData,
+                requestTime: 1677005916012,
+                eTag: nil
+            ),
             publicKey: Signing.loadPublicKey()
         )) == false
     }
@@ -100,10 +104,13 @@ class SigningTests: TestCase {
         let logger = TestLogHandler()
 
         _ = Signing.verify(signature: "invalid signature".asData.base64EncodedString(),
-                           with: .init(message: "Hello World".asData,
-                                       nonce: "nonce".asData,
-                                       requestTime: 1677005916012,
-                                       eTag: nil),
+                           with: .init(
+                            notModifiedResponse: false,
+                            message: "Hello World".asData,
+                            nonce: "nonce".asData,
+                            requestTime: 1677005916012,
+                            eTag: nil
+                           ),
                            publicKey: Signing.loadPublicKey())
 
         logger.verifyMessageWasLogged("Signature failed verification", level: .warn)
@@ -115,15 +122,27 @@ class SigningTests: TestCase {
         let requestTime = 1677005916012
         let salt = Self.createSalt()
 
-        let signature = try self.sign(message: message, nonce: nonce, salt: salt, requestTime: requestTime)
+        let signature = try self.sign(
+            parameters: .init(
+                notModifiedResponse: false,
+                message: message.asData,
+                nonce: nonce.asData,
+                requestTime: requestTime,
+                eTag: nil
+            ),
+            salt: salt.asData
+        )
         let fullSignature = salt.asData + signature
 
         expect(Signing.verify(
             signature: fullSignature.base64EncodedString(),
-            with: .init(message: message.asData,
-                        nonce: nonce.asData,
-                        requestTime: requestTime,
-                        eTag: nil),
+            with: .init(
+                notModifiedResponse: false,
+                message: message.asData,
+                nonce: nonce.asData,
+                requestTime: requestTime,
+                eTag: nil
+            ),
             publicKey: self.publicKey
         )) == true
     }
@@ -151,10 +170,13 @@ class SigningTests: TestCase {
         expect(
             Signing.verify(
                 signature: expectedSignature,
-                with: .init(message: response.asData,
-                            nonce: nonce,
-                            requestTime: requestTime,
-                            eTag: nil),
+                with: .init(
+                    notModifiedResponse: false, // TODO: test true
+                    message: response.asData,
+                    nonce: nonce,
+                    requestTime: requestTime,
+                    eTag: nil
+                ),
                 publicKey: Signing.loadPublicKey()
             )
         ) == true
@@ -200,9 +222,15 @@ class SigningTests: TestCase {
     func testResponseVerificationWithValidSignature() throws {
         let message = "Hello World"
         let nonce = "0123456789ab"
+        let requestTime = Date().millisecondsSince1970
         let salt = Self.createSalt()
 
-        let signature = try self.sign(parameters: .init(message: message, nonce: nonce), salt: salt)
+        let signature = try self.sign(parameters: .init(notModifiedResponse: false, // TODO: test this too
+                                                        message: message.asData,
+                                                        nonce: nonce.asData,
+                                                        requestTime: requestTime,
+                                                        eTag: nil), // TODO: test this too
+                                      salt: salt.asData)
         let fullSignature = salt.asData + signature
 
         let request = HTTPRequest(method: .get, path: .health, nonce: nonce.asData)
@@ -210,7 +238,8 @@ class SigningTests: TestCase {
             with: message.asData,
             statusCode: .success,
             headers: [
-                HTTPClient.ResponseHeader.signature.rawValue: fullSignature.base64EncodedString()
+                HTTPClient.ResponseHeader.signature.rawValue: fullSignature.base64EncodedString(),
+                HTTPClient.ResponseHeader.requestTime.rawValue: String(requestTime)
             ],
             request: request,
             publicKey: self.publicKey
@@ -220,7 +249,7 @@ class SigningTests: TestCase {
     }
 
 }
-
+//
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
 extension SigningTests {
 

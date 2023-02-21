@@ -103,7 +103,7 @@ final class HTTPClientTests: BaseHTTPClientTests {
         }
 
         expect(headers).toNot(beEmpty())
-        expect(headers?.keys).toNot(contain(HTTPClient.nonceHeaderName))
+        expect(headers?.keys).toNot(contain(HTTPClient.RequestHeader.nonce.rawValue))
     }
 
     func testRequestIncludesNonceInBase64() {
@@ -119,8 +119,8 @@ final class HTTPClientTests: BaseHTTPClientTests {
         }
 
         expect(headers).toNot(beEmpty())
-        expect(headers?.keys).to(contain(HTTPClient.nonceHeaderName))
-        expect(headers?[HTTPClient.nonceHeaderName]) == "MTIzNDU2Nzg5MGFi"
+        expect(headers?.keys).to(contain(HTTPClient.RequestHeader.nonce.rawValue))
+        expect(headers?[HTTPClient.RequestHeader.nonce.rawValue]) == "MTIzNDU2Nzg5MGFi"
     }
 
     func testAlwaysSetsContentTypeHeader() {
@@ -1178,8 +1178,8 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         }
 
         expect(headers).toNot(beEmpty())
-        expect(headers?.keys).to(contain(HTTPClient.nonceHeaderName))
-        expect(headers?[HTTPClient.nonceHeaderName]) == request.nonce?.base64EncodedString()
+        expect(headers?.keys).to(contain(HTTPClient.RequestHeader.nonce.rawValue))
+        expect(headers?[HTTPClient.RequestHeader.nonce.rawValue]) == request.nonce?.base64EncodedString()
     }
 
     func testAutomaticallyAddsNonceIfRequired() throws {
@@ -1197,8 +1197,8 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         }
 
         expect(headers).toNot(beEmpty())
-        expect(headers?.keys).to(contain(HTTPClient.nonceHeaderName))
-        expect(headers?[HTTPClient.nonceHeaderName]).toNot(beNil())
+        expect(headers?.keys).to(contain(HTTPClient.RequestHeader.nonce.rawValue))
+        expect(headers?[HTTPClient.RequestHeader.nonce.rawValue]).toNot(beNil())
     }
 
     func testFailedVerificationIfResponseContainsNoSignature() throws {
@@ -1266,9 +1266,10 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
         expect(response).to(beSuccess())
         expect(response?.value?.verificationResult) == .verified
 
+        // TODO: etag, etc
         expect(MockSigning.requests).to(haveCount(1))
-        expect(MockSigning.requests.onlyElement?.message) == Data()
-        expect(MockSigning.requests.onlyElement?.nonce) == request.nonce
+        expect(MockSigning.requests.onlyElement?.parameters.message) == Data()
+        expect(MockSigning.requests.onlyElement?.parameters.nonce) == request.nonce
         expect(MockSigning.requests.onlyElement?.signature) == signature
         expect(MockSigning.requests.onlyElement?.publicKey).toNot(beNil())
     }
@@ -1403,7 +1404,7 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
             return .init(data: Data(),
                          statusCode: .success,
                          headers: [
-                            HTTPClient.responseSignatureHeaderName: "signature"
+                            HTTPClient.ResponseHeader.signature.rawValue: "signature"
                          ])
         }
 
@@ -1441,7 +1442,7 @@ final class SignatureVerificationHTTPClientTests: BaseHTTPClientTests {
                 return .init(data: Data(),
                              statusCode: .success,
                              headers: [
-                                HTTPClient.responseSignatureHeaderName: signature
+                                HTTPClient.ResponseHeader.signature.rawValue: signature
                              ])
             } else {
                 return .emptySuccessResponse()
