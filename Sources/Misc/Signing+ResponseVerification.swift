@@ -61,15 +61,31 @@ extension HTTPResponse where Body == Data {
             return .notVerified
         }
 
-        guard let signature = HTTPResponse.value(forCaseInsensitiveHeaderField: HTTPClient.responseSignatureHeaderName,
-                                                 in: headers) else {
+        guard let signature = HTTPResponse.value(
+            forCaseInsensitiveHeaderField: HTTPClient.ResponseHeader.signature.rawValue,
+            in: headers
+        ) else {
             Logger.warn(Strings.signing.signature_was_requested_but_not_provided(request))
 
             return .failed
         }
 
+        guard let requestTimeString = HTTPResponse.value(
+            forCaseInsensitiveHeaderField: HTTPClient.ResponseHeader.requestTime.rawValue,
+            in: headers
+        ), let requestTime = Int(requestTimeString) else {
+            Logger.warn(Strings.signing.request_time_missing_from_headers(request))
+
+            return .failed
+        }
+
+        let eTag = HTTPResponse.value(forCaseInsensitiveHeaderField: HTTPClient.ResponseHeader.eTag.rawValue,
+                                      in: headers)
+
         if signing.verify(message: body,
                           nonce: nonce,
+                          requestTime: requestTime,
+                          eTag: eTag,
                           hasValidSignature: signature,
                           with: publicKey) {
             return .verified

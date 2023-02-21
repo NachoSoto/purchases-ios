@@ -16,7 +16,7 @@ import Foundation
 
 class ETagManager {
 
-    static let eTagHeaderName = "X-RevenueCat-ETag"
+    static let eTagHeaderName = HTTPClient.ResponseHeader.eTag.rawValue
 
     private let userDefaults: SynchronizedUserDefaults
 
@@ -45,7 +45,7 @@ class ETagManager {
             }
         }
 
-        return [ETagManager.eTagHeaderName: storedETag]
+        return [HTTPClient.ResponseHeader.eTag.rawValue: storedETag]
     }
 
     func httpResultFromCacheOrBackend(with response: HTTPResponse<Data?>,
