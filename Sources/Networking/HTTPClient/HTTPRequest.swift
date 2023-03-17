@@ -101,6 +101,7 @@ extension HTTPRequest {
         case postSubscriberAttributes(appUserID: String)
         case postAdServicesToken(appUserID: String)
         case health
+        case getProductsEntitlements
 
     }
 
@@ -119,7 +120,8 @@ extension HTTPRequest.Path {
                 .postOfferForSigning,
                 .postReceiptData,
                 .postSubscriberAttributes,
-                .postAdServicesToken:
+                .postAdServicesToken,
+                .getProductsEntitlements:
             return true
 
         case .health:
@@ -140,7 +142,7 @@ extension HTTPRequest.Path {
                 .postSubscriberAttributes,
                 .postAdServicesToken:
             return true
-        case .health:
+        case .health, .getProductsEntitlements:
             return false
         }
     }
@@ -158,7 +160,8 @@ extension HTTPRequest.Path {
                 .postSubscriberAttributes,
                 .postAttributionData,
                 .postAdServicesToken,
-                .postOfferForSigning:
+                .postOfferForSigning,
+                .getProductsEntitlements:
             return false
         }
     }
@@ -200,6 +203,9 @@ extension HTTPRequest.Path: CustomStringConvertible {
 
         case .health:
             return "health"
+
+        case .getProductsEntitlements:
+            return "products_entitlements"
         }
     }
 

@@ -18,13 +18,16 @@ class OfferingsAPI {
     typealias IntroEligibilityResponseHandler = ([String: IntroEligibility], BackendError?) -> Void
     typealias OfferSigningResponseHandler = (Result<PostOfferForSigningOperation.SigningData, BackendError>) -> Void
     typealias OfferingsResponseHandler = (Result<OfferingsResponse, BackendError>) -> Void
+    typealias ProductsEntitlementsResponseHandler = (Result<ProductsEntitlementsResponse, BackendError>) -> Void
 
     private let offeringsCallbacksCache: CallbackCache<OfferingsCallback>
+    private let productsEntitlementsCallbacksCache: CallbackCache<ProductsEntitlementsCallback>
     private let backendConfig: BackendConfiguration
 
     init(backendConfig: BackendConfiguration) {
         self.backendConfig = backendConfig
-        self.offeringsCallbacksCache = CallbackCache<OfferingsCallback>()
+        self.offeringsCallbacksCache = .init()
+        self.productsEntitlementsCallbacksCache = .init()
     }
 
     func getOfferings(appUserID: String,
@@ -78,6 +81,23 @@ class OfferingsAPI {
                                                                         postOfferForSigningData: postOfferData,
                                                                         responseHandler: completion)
         self.backendConfig.operationQueue.addOperation(postOfferForSigningOperation)
+    }
+
+    func getProductsEntitlements(withRandomDelay randomDelay: Bool,
+                                 completion: @escaping ProductsEntitlementsResponseHandler) {
+        let factory = GetProductsEntitlementsOperation.createFactory(
+            configuration: self.backendConfig,
+            callbackCache: self.productsEntitlementsCallbacksCache
+        )
+
+        let callback = ProductsEntitlementsCallback(cacheKey: factory.cacheKey, completion: completion)
+        let cacheStatus = self.productsEntitlementsCallbacksCache.add(callback)
+
+        self.backendConfig.addCacheableOperation(
+            with: factory,
+            withRandomDelay: randomDelay,
+            cacheStatus: cacheStatus
+        )
     }
 
 }
