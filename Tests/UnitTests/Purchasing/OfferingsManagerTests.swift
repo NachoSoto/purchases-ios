@@ -137,6 +137,28 @@ extension OfferingsManagerTests {
         })
     }
 
+    // TODO
+    func testMissingProductsLogsUnderlyingError() throws {
+        self.mockOfferings.stubbedGetOfferingsCompletionResult = .success(
+            MockData.backendOfferingsResponseWithUnknownProducts
+        )
+        self.mockProductsManager.stubbedProductsCompletionResult = .success([
+            StoreProduct(sk1Product: MockSK1Product(mockProductIdentifier: "monthly_freetrial"))
+        ])
+
+        // when
+        let result = waitUntilValue { completed in
+            self.offeringsManager.offerings(appUserID: MockData.anyAppUserID, fetchPolicy: .failIfProductsAreMissing) {
+                completed($0)
+            }
+        }
+
+        // then
+        expect(result).to(beFailure { error in
+            expect(error).to(matchError(OfferingsManager.Error.missingProducts(identifiers: ["yearly_freetrial"])))
+        })
+    }
+
     func testOfferingsForAppUserIDReturnsNilIfFailBackendRequest() {
         // given
         self.mockOfferings.stubbedGetOfferingsCompletionResult = .failure(MockData.unexpectedBackendResponseError)
