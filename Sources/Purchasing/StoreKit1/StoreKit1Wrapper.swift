@@ -127,7 +127,10 @@ extension StoreKit1Wrapper: PaymentQueueWrapperType {
         }
 
         if !existingCompletion {
+            // TODO: add more logs here
             self.paymentQueue.finishTransaction(transaction)
+        } else {
+            // TODO: log
         }
     }
 
@@ -176,6 +179,7 @@ extension StoreKit1Wrapper: SKPaymentTransactionObserver {
                 Logger.debug(Strings.purchase.paymentqueue_removed_transaction(self, transaction))
                 delegate.storeKit1Wrapper(self, removedTransaction: transaction)
 
+                // TODO: is this modifying the reference?
                 if let callbacks = self.finishedTransactionCallbacks.value.removeValue(forKey: transaction),
                     !callbacks.isEmpty {
                     callbacks.forEach { $0() }
