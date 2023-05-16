@@ -15,6 +15,8 @@ import Foundation
 
 // swiftlint:disable nesting
 
+// TODO: cache this
+
 struct OfferingsResponse {
 
     struct Offering {
@@ -50,8 +52,8 @@ extension OfferingsResponse {
 
 }
 
-extension OfferingsResponse.Offering.Package: Decodable {}
-extension OfferingsResponse.Offering: Decodable {}
-extension OfferingsResponse: Decodable {}
+extension OfferingsResponse.Offering.Package: Codable, Equatable {}
+extension OfferingsResponse.Offering: Codable, Equatable {}
+extension OfferingsResponse: Codable, Equatable {}
 
 extension OfferingsResponse: HTTPResponseBody {}

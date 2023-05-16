@@ -1465,6 +1465,7 @@ private extension Purchases {
                 )
             }
 
+            // TODO: updateIfNeeded()?
             if self.deviceCache.isOfferingsCacheStale(isAppBackgrounded: isAppBackgrounded) {
                 self.offeringsManager.updateOfferingsCache(appUserID: self.appUserID,
                                                            isAppBackgrounded: isAppBackgrounded,

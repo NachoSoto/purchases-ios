@@ -323,3 +323,16 @@ class NetworkErrorTests: TestCase {
         )
     }
 }
+
+extension NetworkError {
+
+    static func serverDown(
+        file: String = #fileID, function: String = #function, line: UInt = #line
+    ) -> Self {
+        return .errorResponse(
+            .init(code: .internalServerError, originalCode: BackendErrorCode.internalServerError.rawValue),
+            .internalServerError
+        )
+    }
+
+}
