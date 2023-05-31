@@ -508,6 +508,7 @@ jobs:
     steps:
       - checkout
       - install-dependencies
+      - update-spm-installation-commit
       - run:
           name: Run backend_integration Tests
           command: bundle exec fastlane backend_integration_tests
@@ -734,6 +735,7 @@ jobs:
       - setup-git-credentials
       - trust-github-key
       - install-dependencies
+      - update-spm-installation-commit
       - run:
           name: V3 LoadShedder integration tests
           command: bundle exec fastlane v3_loadshedder_integration_tests
@@ -849,24 +851,7 @@ workflows:
           xcode_version: '14.3.0'
       - run-test-ios-16:
           xcode_version: '14.3.0'
-      - run-test-ios-15:
-          xcode_version: '14.3.0'
-      - run-test-watchos:
-          xcode_version: '14.3.0'
-      - run-test-tvos:
-          xcode_version: '14.3.0'
-      - run-test-ios-14:
-          # Simulator fails to install on Xcode 14
-          xcode_version: '13.4.1'
-      - run-test-ios-13:
-          # Simulator fails to install on Xcode 14
-          xcode_version: '13.4.1'
-          <<: *release-branches-and-main
-      - run-test-ios-12:
-          # Simulator fails to install on Xcode 14
-          xcode_version: '13.4.1'
-          <<: *release-branches-and-main
-      - build-tv-watch-and-macos:
+      - loadshedder-integration-tests:
           xcode_version: '14.3.0'
       - backend-integration-tests:
           xcode_version: '14.3.0'

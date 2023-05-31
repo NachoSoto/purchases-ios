@@ -24,9 +24,7 @@ class BaseStoreKitIntegrationTests: BaseBackendIntegrationTests {
     private(set) var testSession: SKTestSession!
 
     override func setUp() async throws {
-        if self.testSession == nil {
-            try self.configureTestSession()
-        }
+        try self.testSession = StoreKitTestSessionFactory.create()
 
         // Initialize `Purchases` *after* the fresh new session has been created
         // (and transactions has been cleared), to avoid the SDK posting receipts from
@@ -38,20 +36,6 @@ class BaseStoreKitIntegrationTests: BaseBackendIntegrationTests {
         self.testSession = nil
 
         super.tearDown()
-    }
-
-    func configureTestSession() throws {
-        assert(self.testSession == nil, "Attempted to configure session multiple times")
-
-        self.testSession = try SKTestSession(configurationFileNamed: Constants.storeKitConfigFileName)
-        self.testSession.resetToDefaultState()
-        self.testSession.disableDialogs = true
-        self.testSession.clearTransactions()
-        if #available(iOS 15.2, *) {
-            self.testSession.timeRate = .monthlyRenewalEveryThirtySeconds
-        } else {
-            self.testSession.timeRate = .oneSecondIsOneDay
-        }
     }
 
 }

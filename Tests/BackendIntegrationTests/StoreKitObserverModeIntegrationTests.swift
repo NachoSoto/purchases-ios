@@ -97,13 +97,10 @@ class StoreKit1ObserverModeWithExistingPurchasesTests: BaseStoreKitObserverModeI
     }
 
     override func setUp() async throws {
-        // 1. Create `SKTestSession`
-        try self.configureTestSession()
-
-        // 2. Purchase product directly from StoreKit
+        // 1. Purchase product directly from StoreKit
         try await self.purchaseProductFromStoreKit()
 
-        // 3. Configure SDK
+        // 2. Configure SDK
         try await super.setUp()
     }
 
