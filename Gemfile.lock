@@ -346,6 +346,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  arm64-darwin-22
   x86_64-darwin-22
   x86_64-linux
 
@@ -360,4 +361,4 @@ DEPENDENCIES
   rest-client
 
 BUNDLED WITH
-   2.4.13
+   2.4.12
