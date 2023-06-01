@@ -1,1 +1,1 @@
-git "./purchases-root" "main"
+github "RevenueCat/purchases-ios" "main"

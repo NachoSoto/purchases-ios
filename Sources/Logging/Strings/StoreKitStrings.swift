@@ -69,6 +69,7 @@ extension StoreKitStrings: CustomStringConvertible {
             return "SKRequest failed: \(error.description)"
 
         case .store_products_request_failed(let error):
+//            [16:32:01]: ▸ 2023-06-01 16:32:01.655538+0000 xctest[10076:33024] [Purchases] - ERROR: 🍎‼️ Store products request failed! Error: UNKNOWN_ERROR. Error Domain=SKErrorDomain Code=0 "UNKNOWN_ERROR" UserInfo={NSLocalizedDescription=UNKNOWN_ERROR, NSUnderlyingError=0x600002b04cf0 {Error Domain=ASDErrorDomain Code=950 "Unhandled exception" UserInfo={NSLocalizedDescription=Unhandled exception, NSLocalizedFailureReason=An unknown error occurred}}}
             return "Store products request failed! Error: \(error.description)"
 
         case .skproductsrequest_timed_out(let afterTimeInSeconds):
