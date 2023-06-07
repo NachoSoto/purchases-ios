@@ -1,0 +1,1018 @@
+{
+  "identifier" : "3330CE6E",
+  "nonRenewingSubscriptions" : [
+    {
+      "displayPrice" : "59.99",
+      "familyShareable" : false,
+      "internalID" : "1590179557",
+      "localizations" : [
+        {
+          "description" : "Lifetime non-renewing subscription for $59.99",
+          "displayName" : "Lifetime $59.99",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "rc_5999_non_renewing",
+      "referenceName" : "Non-renewing sub $59.99",
+      "type" : "NonRenewingSubscription"
+    }
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "1524362056",
+      "localizations" : [
+        {
+          "description" : "500 coins for cat food",
+          "displayName" : "500 coins for cat food",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.revenuecat.500coins.1.99",
+      "referenceName" : "500 coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "199.99",
+      "familyShareable" : false,
+      "internalID" : "1522725065",
+      "localizations" : [
+        {
+          "description" : "Lifetime Cats",
+          "displayName" : "Lifetime Cats",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.revenuecat.lifetime.199.99",
+      "referenceName" : "lifetime",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.0",
+      "familyShareable" : false,
+      "internalID" : "6445692765",
+      "localizations" : [
+        {
+          "description" : "Lifetime subscription",
+          "displayName" : "Lifetime subscription",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.revenuecat.lifetime_with_free_trial",
+      "referenceName" : "lifetime_with_free_trial 03-day Trial",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "1471011768",
+    "_developerTeamID" : "8SXR2327BM",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 707772991.31896996,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : {
+          "index" : 1,
+          "type" : "purchase"
+        },
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : {
+          "index" : 0,
+          "type" : "verification"
+        },
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "20653038",
+      "localizations" : [
+
+      ],
+      "name" : "$39.99 Annual Group",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+            {
+              "internalID" : "77FF378E",
+              "numberOfPeriods" : 1,
+              "offerID" : "promo_cat_1",
+              "paymentMode" : "free",
+              "referenceName" : "Promo Cat 1",
+              "subscriptionPeriod" : "P1M"
+            },
+            {
+              "displayPrice" : "29.99",
+              "internalID" : "A3CB1237",
+              "numberOfPeriods" : 1,
+              "offerID" : "promo_cat_2",
+              "paymentMode" : "payUpFront",
+              "referenceName" : "Promo Cat 2",
+              "subscriptionPeriod" : "P1M"
+            }
+          ],
+          "codeOffers" : [
+            {
+              "eligibility" : [
+                "existing",
+                "new",
+                "expired"
+              ],
+              "internalID" : "216560E9",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "referenceName" : "andy_test_may_2021",
+              "subscriptionPeriod" : "P1M"
+            },
+            {
+              "eligibility" : [
+                "new",
+                "existing",
+                "expired"
+              ],
+              "internalID" : "93947446",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "referenceName" : "test_offer_codes",
+              "subscriptionPeriod" : "P3D"
+            }
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "1520794530",
+          "introductoryOffer" : {
+            "internalID" : "289E2B93",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Unlimited access",
+              "displayName" : "Unlimited access",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_3999_1y_1w0",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual $39.99, 1-week free",
+          "subscriptionGroupID" : "20653038",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "21009853",
+      "localizations" : [
+
+      ],
+      "name" : "anna_subscripton_product_test",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.49",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1640021360",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "annatestappus",
+              "displayName" : "annatestappus",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "anna_test_08",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "first_test_anna",
+          "subscriptionGroupID" : "21009853",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "20942823",
+      "localizations" : [
+
+      ],
+      "name" : "backwards_upgrade",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "10.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "1618486664",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "This is in a lower service level.",
+              "displayName" : "Annual Level 2",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "annual_downgrade",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual Downgrade",
+          "subscriptionGroupID" : "20942823",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1618486046",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "This is in a higher service level.",
+              "displayName" : "Monthly Level 1",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "monthly_upgrade",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Upgrade",
+          "subscriptionGroupID" : "20942823",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "21007281",
+      "localizations" : [
+
+      ],
+      "name" : "glanz_tests",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1638402362",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Refreshes annually",
+              "displayName" : "Glanz annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.revenuecat.glanz_annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual subscription",
+          "subscriptionGroupID" : "21007281",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1638402072",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Refreshes monthly",
+              "displayName" : "Glanz Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.revenuecat.glanz_month",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly subscription",
+          "subscriptionGroupID" : "21007281",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "49.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1638401195",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Refreshes weekly",
+              "displayName" : "Weekly Subscription",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.revenuecat.glanz_week",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly subscription",
+          "subscriptionGroupID" : "21007281",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "20973963",
+      "localizations" : [
+
+      ],
+      "name" : "josh_h_upgrade_tests",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1632448873",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Monthly A",
+              "displayName" : "Monthly A",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "upgrade_tests.monthly_a",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly A",
+          "subscriptionGroupID" : "20973963",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "1.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "1632449348",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Monthly B",
+              "displayName" : "Monthly B",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "upgrade_tests.monthly_b",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly B",
+          "subscriptionGroupID" : "20973963",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "8.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1632452319",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Yearly A",
+              "displayName" : "Yearly A",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "upgrade_tests.yearly_a",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly A",
+          "subscriptionGroupID" : "20973963",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "10.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "1632452439",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Yearly B",
+              "displayName" : "Yearly B",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "upgrade_tests.yearly_b",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly B",
+          "subscriptionGroupID" : "20973963",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "20662382",
+      "localizations" : [
+
+      ],
+      "name" : "main subscription group",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "10.99",
+          "familyShareable" : false,
+          "groupNumber" : 5,
+          "internalID" : "1607162498",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full Access",
+              "displayName" : "Full Access",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_1099_1w",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "1099 weekly",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+            {
+              "internalID" : "F4EA41F2",
+              "numberOfPeriods" : 1,
+              "offerID" : "test_promo_offer",
+              "paymentMode" : "free",
+              "referenceName" : "test_promo_offer",
+              "subscriptionPeriod" : "P1M"
+            },
+            {
+              "displayPrice" : "1.99",
+              "internalID" : "FCBF0E7E",
+              "numberOfPeriods" : 1,
+              "offerID" : "promo_offer_payasyougo_1_99",
+              "paymentMode" : "payAsYouGo",
+              "referenceName" : "Promotional Offer",
+              "subscriptionPeriod" : "P1Y"
+            }
+          ],
+          "codeOffers" : [
+            {
+              "displayPrice" : "0.49",
+              "eligibility" : [
+                "existing",
+                "new",
+                "expired"
+              ],
+              "internalID" : "9A38F89A",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "payUpFront",
+              "referenceName" : "Andy Test",
+              "subscriptionPeriod" : "P2M"
+            }
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1522722883",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Annual $39.99, 2-weeks free",
+              "displayName" : "Annual $39.99, 2-weeks free",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.revenuecat.annual_39.99.2_week_intro",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual $39.99, 2-weeks free",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+            {
+              "internalID" : "4674DFB7",
+              "numberOfPeriods" : 1,
+              "offerID" : "promo_cat",
+              "paymentMode" : "free",
+              "referenceName" : "Promo Cat",
+              "subscriptionPeriod" : "P1W"
+            }
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "10.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "1557368454",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "This is a monthly subscription",
+              "displayName" : "Monthly $10.99",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_1099_1m",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly $10.99",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+            {
+              "displayPrice" : "1.49",
+              "eligibility" : [
+                "new",
+                "expired",
+                "existing"
+              ],
+              "internalID" : "BE73C1FC",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "payAsYouGo",
+              "referenceName" : "offer_code_2",
+              "subscriptionPeriod" : "P1M"
+            },
+            {
+              "displayPrice" : "2.49",
+              "eligibility" : [
+                "expired"
+              ],
+              "internalID" : "44B77913",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "payAsYouGo",
+              "referenceName" : "Special Deal",
+              "subscriptionPeriod" : "P1M"
+            }
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "1522724120",
+          "introductoryOffer" : {
+            "internalID" : "96C65644",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Monthly $4.99, 1-week free",
+              "displayName" : "Monthly $4.99, 1-week free",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.revenuecat.monthly_4.99.1_week_intro",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly $4.99, 1-week free",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "49.99",
+          "familyShareable" : false,
+          "groupNumber" : 4,
+          "internalID" : "1597143682",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Changing price from 29.99 to 49.99",
+              "displayName" : "Monthly starting 29.99",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_price_increase_2999_4999",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Test Increase 29.99 -> 49.99",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "14.49",
+          "familyShareable" : false,
+          "groupNumber" : 6,
+          "internalID" : "1636034686",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Weekly subscription for $14.99",
+              "displayName" : "Weekly $14.99",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_1499_1w",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly $14.99",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 7,
+          "internalID" : "1644383044",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Lower priority annual ",
+              "displayName" : "Yearly 100$",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_10000_1y",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly 100",
+          "subscriptionGroupID" : "20662382",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "21278071",
+      "localizations" : [
+
+      ],
+      "name" : "Mark's Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+            {
+              "internalID" : "35A403A4",
+              "numberOfPeriods" : 1,
+              "offerID" : "mark_premium2_offer",
+              "paymentMode" : "free",
+              "referenceName" : "mark_premium2_offer",
+              "subscriptionPeriod" : "P1Y"
+            }
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "5.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6446651092",
+          "introductoryOffer" : {
+            "internalID" : "F116E194",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+
+          ],
+          "productID" : "mark_premium2",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Mark's Premium Monthly 2",
+          "subscriptionGroupID" : "21278071",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+            {
+              "eligibility" : [
+                "expired",
+                "existing",
+                "new"
+              ],
+              "internalID" : "22B66325",
+              "isStackable" : true,
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "referenceName" : "mark_premium_offer_code",
+              "subscriptionPeriod" : "P2W"
+            }
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6446380531",
+          "introductoryOffer" : {
+            "internalID" : "7F418D67",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+
+          ],
+          "productID" : "mark_premium",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Mark's Premium Weekly 2",
+          "subscriptionGroupID" : "21278071",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+            {
+              "internalID" : "16D2C6D7",
+              "numberOfPeriods" : 1,
+              "offerID" : "mark_premium3_offer",
+              "paymentMode" : "free",
+              "referenceName" : "mark_premium3_offer",
+              "subscriptionPeriod" : "P1Y"
+            },
+            {
+              "displayPrice" : "2.99",
+              "internalID" : "8E41FBEC",
+              "numberOfPeriods" : 1,
+              "offerID" : "23442341234rqawwf54r23asdfasdf",
+              "paymentMode" : "payAsYouGo",
+              "referenceName" : "23442341234rqawwf54r23asdfasdf",
+              "subscriptionPeriod" : "P1Y"
+            }
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "79.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6446653946",
+          "introductoryOffer" : {
+            "internalID" : "9CA254A6",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P6M"
+          },
+          "localizations" : [
+
+          ],
+          "productID" : "mark_premium3",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Mark's Premium Yearly 3",
+          "subscriptionGroupID" : "21278071",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "21101495",
+      "localizations" : [
+
+      ],
+      "name" : "nacho_test",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6445201080",
+          "introductoryOffer" : {
+            "internalID" : "58E93A5A",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+
+          ],
+          "productID" : "com.revenuecat.intro_test.monthly.1_week_intro",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "com.revenuecat.intro_test.monthly.1_week_intro",
+          "subscriptionGroupID" : "21101495",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6445201079",
+          "introductoryOffer" : null,
+          "localizations" : [
+
+          ],
+          "productID" : "com.revenuecat.intro_test.monthly.no_intro",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "com.revenuecat.intro_test.monthly.no_intro",
+          "subscriptionGroupID" : "21101495",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    },
+    {
+      "id" : "21042811",
+      "localizations" : [
+
+      ],
+      "name" : "Subscription Demo SB1",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6444133123",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Customer App Build Review SB ",
+              "displayName" : "RC Test App",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "RC_TRAINING_SB_829_8999_52W_3",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "$19.99 / monthly",
+          "subscriptionGroupID" : "21042811",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6444132920",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Customer App build review SB1",
+              "displayName" : "RC Training App SB",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "rc_training_sb_499_1w",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "$4.99 / weekly ",
+          "subscriptionGroupID" : "21042811",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "89.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6444133129",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Customer App Build Review SB",
+              "displayName" : "RC Training App",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "RC_TRAINING_SB_829_8999_52W_4",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "$89.99 / annual ",
+          "subscriptionGroupID" : "21042811",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
