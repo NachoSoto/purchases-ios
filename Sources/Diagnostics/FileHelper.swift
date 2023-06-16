@@ -38,13 +38,19 @@ actor FileHandler {
         try? self.fileHandle.close()
     }
 
+    /// - Note: this loads the entire file in memory
+    /// For newer versions, consider using `readLines` instead.
     func readFile() throws -> Data {
-        // TODO: fileHandle.bytes?
-
-        // TODO: wrap error
-        try self.fileHandle.seek(toOffset: 0)
+        try self.moveToBeginningOfFile()
 
         return self.fileHandle.availableData
+    }
+
+    @available(iOS 15.0, tvOS 15.0, macOS 12.0, watchOS 8.0, *)
+    func readLines() throws -> AsyncLineSequence<FileHandle.AsyncBytes> {
+        try self.moveToBeginningOfFile()
+
+        return self.fileHandle.bytes.lines
     }
 
     func append(line: String) {
@@ -52,6 +58,33 @@ actor FileHandler {
         self.fileHandle.write(line.asData)
         self.fileHandle.write(Self.lineBreak)
     }
+
+//    func removeFirstLines(count: Int) {
+//        precondition(count > 0, "Invalid count: \(count)")
+//
+//        let data = try self.readFile()
+//
+//        if let content = String(data: data, encoding: .utf8) {
+//            var lines = content.components(separatedBy: "\n")
+//            if n <= lines.count {
+//                lines.removeFirst(n)
+//                let remainingContent = lines.joined(separator: "\n")
+//                if let remainingData = remainingContent.data(using: .utf8) {
+//                    // Truncate the file
+//                    fileHandle.truncateFile(atOffset: 0)
+//                    // Write the remaining data back to the file
+//                    fileHandle.write(remainingData)
+//                    fileHandle.seek(toFileOffset: 0) // Reset the file pointer to the beginning
+//                }
+//            } else {
+//                throw NSError(domain: "FileActor", code: -1, userInfo: [NSLocalizedDescriptionKey: "Attempting to remove more lines than the file has."])
+//            }
+//        } else {
+//            throw NSError(domain: "FileActor", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to convert file data to string"])
+//        }
+//    }
+
+    // TODO: remove N lines
 
     private static let lineBreak: Data = "\n".asData
 
@@ -67,6 +100,7 @@ extension FileHandler {
         case failedCreatingFile(URL)
         case failedCreatingDirectory(URL)
         case failedCreatingHandle(Swift.Error)
+        case failedSeeking(Swift.Error)
 
     }
 
@@ -76,6 +110,14 @@ extension FileHandler {
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.2, *)
 private extension FileHandler {
+
+    func moveToBeginningOfFile() throws {
+        do {
+            try self.fileHandle.seek(toOffset: 0)
+        } catch {
+            throw Error.failedSeeking(error)
+        }
+    }
 
     static func createFileIfNecessary(_ url: URL) throws {
         let fileManager: FileManager = .default
@@ -101,79 +143,3 @@ private extension FileHandler {
     }
 
 }
-
-
-//class FileHelper {
-//
-//    let fileManager = FileManager.default
-//    let directoryURL: URL
-//
-//    init(directoryURL: URL) {
-//        self.directoryURL = directoryURL
-//    }
-//
-//    private let test: Test = .init()
-//
-//    func append(content: String, to filePath: String) throws {
-//        let fileURL = self.directoryURL.appendingPathComponent(filePath)
-//        let data = content.asData
-//
-//        if self.fileManager.fileExists(atPath: fileURL.path) {
-//            do {
-//                let fileHandle = try FileHandle(forWritingTo: fileURL)
-//                fileHandle.seekToEndOfFile()
-//                fileHandle.write(data)
-//                fileHandle.closeFile()
-//            } catch {
-//                throw Error.unableToCreateFileHandle(error)
-//            }
-//        } else {
-//            try? data.write(to: fileURL)
-//        }
-//    }
-//
-//    func deleteFile(filePath: String) -> Bool {
-//        let fileURL = directoryURL.appendingPathComponent(filePath)
-//        do {
-//            try fileManager.removeItem(at: fileURL)
-//            return true
-//        } catch {
-//            print("Error deleting file: \(error)")
-//            return false
-//        }
-//    }
-//
-//    func readFilePerLines(filePath: String) -> [String] {
-//        let fileURL = directoryURL.appendingPathComponent(filePath)
-//        var readLines = [String]()
-//        if let reader = try? LineReader(path: fileURL.path) {
-//            for line in reader {
-//                readLines.append(line)
-//            }
-//        }
-//        return readLines
-//    }
-//
-//    func removeFirstLinesFromFile(filePath: String, numberOfLinesToRemove: Int) {
-//        let readLines = readFilePerLines(filePath: filePath)
-//        _ = deleteFile(filePath: filePath)
-//        let textToAppend: String
-//        if readLines.isEmpty || numberOfLinesToRemove >= readLines.count {
-//            print("Trying to remove \(numberOfLinesToRemove) from file with \(readLines.count) lines.")
-//            textToAppend = ""
-//        } else {
-//            let linesAfterRemoval = Array(readLines[numberOfLinesToRemove...])
-//            textToAppend = linesAfterRemoval.joined(separator: "\n")
-//        }
-//        appendToFile(filePath: filePath, contentToAppend: textToAppend)
-//    }
-//
-//    func fileIsEmpty(filePath: String) -> Bool {
-//        let fileURL = directoryURL.appendingPathComponent(filePath)
-//        if !fileManager.fileExists(atPath: fileURL.path) || (try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) == 0 {
-//            return true
-//        }
-//        return false
-//    }
-//
-//}
