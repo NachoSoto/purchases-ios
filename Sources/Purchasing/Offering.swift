@@ -116,8 +116,17 @@ import Foundation
         return package(identifier: key)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
-    init(identifier: String, serverDescription: String, metadata: [String: Any], availablePackages: [Package]) {
+    // TODO: api tester
+
+    // swiftlint:disable cyclomatic_complexity
+
+    /// Initialize an ``Offering`` given a list of ``Package``s.
+    public init(
+        identifier: String,
+        serverDescription: String,
+        metadata: [String: Any],
+        availablePackages: [Package]
+    ) {
         self.identifier = identifier
         self.serverDescription = serverDescription
         self.availablePackages = availablePackages
@@ -170,6 +179,8 @@ import Foundation
 
         super.init()
     }
+
+    // swiftlint:enable cyclomatic_complexity
 
 }
 
