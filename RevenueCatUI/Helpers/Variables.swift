@@ -70,6 +70,7 @@ private extension VariableDataProvider {
 
     func value(for variableName: String) -> String {
         switch variableName {
+       // TODO: add price
         case "price_per_month": return self.localizedPricePerMonth
         case "product_name": return self.productName
         case "intro_duration":
