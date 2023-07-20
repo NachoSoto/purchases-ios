@@ -21,6 +21,7 @@ enum EnvironmentKey: String {
     case RCRunningTests = "RCRunningTests"
     case RCRunningIntegrationTests = "RCRunningIntegrationTests"
     case RCMockAdServicesToken = "RCMockAdServicesToken"
+    case XCCloud = "XCODE_CLOUD"
 
 }
 
@@ -50,6 +51,10 @@ extension ProcessInfo {
 
     static var mockAdServicesToken: String? {
         return self[.RCMockAdServicesToken]?.notEmptyOrWhitespaces
+    }
+
+    static var isXcodeCloud: Bool {
+        return self[.XCCloud] == "1"
     }
 
 }
