@@ -15,9 +15,7 @@
 
 import Nimble
 @testable import RevenueCat
-import SnapshotTesting
 import XCTest
-
 import SwiftUI
 
 @MainActor
