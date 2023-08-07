@@ -1504,6 +1504,8 @@ private extension Purchases {
     }
 
     @objc func applicationWillEnterForeground() {
+        // TODO: check how long since the last time
+
         Logger.debug(Strings.configure.application_foregrounded)
 
         // Note: it's important that we observe "will enter foreground" instead of

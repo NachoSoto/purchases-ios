@@ -29,7 +29,7 @@ struct FooterView: View {
                 RestorePurchasesButton(purchaseHandler: self.purchaseHandler)
 
                 self.separator
-                    .hidden(if: !self.hasTOS && !self.hasPrivacy)
+//                    .hidden(if: !self.hasTOS && !self.hasPrivacy)
             }
 
             if let url = self.configuration.termsOfServiceURL {
@@ -39,7 +39,7 @@ struct FooterView: View {
                 )
 
                 self.separator
-                    .hidden(if: !self.hasPrivacy)
+//                    .hidden(if: !self.hasPrivacy)
             }
 
             if let url = self.configuration.privacyURL {

@@ -140,7 +140,9 @@ private struct PresentingPaywallModifier: ViewModifier {
                 if self.shouldDisplay(info) {
                     Logger.debug(Strings.displaying_paywall)
 
-                    self.isDisplayed = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                        self.isDisplayed = true
+                    }
                 } else {
                     Logger.debug(Strings.not_displaying_paywall)
                 }
