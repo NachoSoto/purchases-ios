@@ -21,6 +21,7 @@ class TransactionPosterTests: TestCase {
     private var productsManager: MockProductsManager!
     private var receiptFetcher: MockReceiptFetcher!
     private var backend: MockBackend!
+    private var cache: MockPostedTransactionCache!
     private var paymentQueueWrapper: MockPaymentQueueWrapper!
     private var systemInfo: MockSystemInfo!
     private var operationDispatcher: MockOperationDispatcher!
@@ -48,8 +49,9 @@ class TransactionPosterTests: TestCase {
                 source: .init(isRestore: false, initiationSource: .queue)
             )
         )
-        expect(result).to(beFailure())
         expect(result.error) == BackendError.missingReceiptFile(self.receiptFetcher.mockReceiptURL)
+
+        expect(self.cache.postedTransactions).to(beEmpty())
     }
 
     func testHandlePurchasedTransaction() throws {
@@ -64,13 +66,40 @@ class TransactionPosterTests: TestCase {
         self.backend.stubbedPostReceiptResult = .success(Self.mockCustomerInfo)
 
         let result = try self.handleTransaction(transactionData)
-        expect(result).to(beSuccess())
-        expect(result.value) === Self.mockCustomerInfo
+        expect(result.customerInfo) === Self.mockCustomerInfo
 
         expect(self.backend.invokedPostReceiptData) == true
         expect(self.backend.invokedPostReceiptDataParameters?.transactionData).to(match(transactionData))
         expect(self.backend.invokedPostReceiptDataParameters?.observerMode) == self.systemInfo.observerMode
         expect(self.mockTransaction.finishInvoked) == true
+        expect(self.cache.postedTransactions).to(
+            contain(self.mockTransaction.transactionIdentifier),
+            description: "Transaction should be marked as posted"
+        )
+    }
+
+    func testHandlePurchasedTransactionDoesNotPostItTwice() throws {
+        self.cache.savePostedTransaction(self.mockTransaction)
+
+        let transactionData = PurchasedTransactionData(
+            appUserID: "user",
+            source: .init(isRestore: false, initiationSource: .queue)
+        )
+
+        let result = try self.handleTransaction(transactionData)
+        expect(result.wasAlreadyPosted) == true
+
+        expect(self.backend.invokedPostReceiptData) == false
+        expect(self.mockTransaction.finishInvoked) == true
+
+        self.logger.verifyMessageWasLogged(
+            Strings.purchase.transaction_poster_skipping_duplicate(
+                productID: self.mockTransaction.productIdentifier,
+                transactionID: self.mockTransaction.transactionIdentifier
+            ),
+            level: .debug,
+            expectedCount: 1
+        )
     }
 
     func testHandlePurchasedTransactionDoesNotFinishNonProcessedConsumables() throws {
@@ -86,8 +115,7 @@ class TransactionPosterTests: TestCase {
         self.backend.stubbedPostReceiptResult = .success(customerInfo)
 
         let result = try self.handleTransaction(transactionData)
-        expect(result).to(beSuccess())
-        expect(result.value) === customerInfo
+        expect(result.customerInfo) === customerInfo
 
         expect(self.backend.invokedPostReceiptData) == true
         expect(self.backend.invokedPostReceiptDataParameters?.transactionData).to(match(transactionData))
@@ -117,8 +145,7 @@ class TransactionPosterTests: TestCase {
         self.backend.stubbedPostReceiptResult = .success(customerInfo)
 
         let result = try self.handleTransaction(transactionData)
-        expect(result).to(beSuccess())
-        expect(result.value) === customerInfo
+        expect(result.customerInfo) === customerInfo
 
         expect(self.backend.invokedPostReceiptData) == true
         expect(self.backend.invokedPostReceiptDataParameters?.transactionData).to(match(transactionData))
@@ -140,12 +167,15 @@ class TransactionPosterTests: TestCase {
         self.backend.stubbedPostReceiptResult = .success(Self.mockCustomerInfo)
 
         let result = try self.handleTransaction(transactionData)
-        expect(result).to(beSuccess())
-        expect(result.value) === Self.mockCustomerInfo
+        expect(result.customerInfo) === Self.mockCustomerInfo
 
         expect(self.backend.invokedPostReceiptData) == true
         expect(self.backend.invokedPostReceiptDataParameters?.observerMode) == true
         expect(self.mockTransaction.finishInvoked) == false
+        expect(self.cache.postedTransactions).to(
+            contain(self.mockTransaction.transactionIdentifier),
+            description: "Transaction should be marked as posted"
+        )
     }
 
     func testFinishTransactionInObserverMode() throws {
@@ -263,19 +293,21 @@ private extension TransactionPosterTests {
         self.receiptFetcher = .init(requestFetcher: .init(operationDispatcher: self.operationDispatcher),
                                     systemInfo: self.systemInfo)
         self.backend = .init()
+        self.cache = .init()
         self.paymentQueueWrapper = .init()
 
         self.poster = .init(
             productsManager: self.productsManager,
             receiptFetcher: self.receiptFetcher,
             backend: self.backend,
+            cache: self.cache,
             paymentQueueWrapper: .right(self.paymentQueueWrapper),
             systemInfo: self.systemInfo,
             operationDispatcher: self.operationDispatcher
         )
     }
 
-    func handleTransaction(_ data: PurchasedTransactionData) throws -> Result<CustomerInfo, BackendError> {
+    func handleTransaction(_ data: PurchasedTransactionData) throws -> TransactionPosterResult {
         let result = waitUntilValue { completion in
             self.poster.handlePurchasedTransaction(self.mockTransaction, data: data) {
                 completion($0)
@@ -342,4 +374,15 @@ private func match(_ data: PurchasedTransactionData) -> Nimble.Predicate<Purchas
 
         return .init(bool: matches, message: .fail("PurchasedTransactionData do not match"))
     }
+}
+
+private extension TransactionPosterResult {
+
+    var wasAlreadyPosted: Bool {
+        switch self {
+        case .alreadyPosted: return true
+        case .success, .failure: return false
+        }
+    }
+
 }

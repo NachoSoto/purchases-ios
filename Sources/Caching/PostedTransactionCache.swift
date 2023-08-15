@@ -19,6 +19,9 @@ protocol PostedTransactionCacheType: Sendable {
     func savePostedTransaction(_ transaction: StoreTransactionType)
     func hasPostedTransaction(_ transaction: StoreTransactionType) -> Bool
 
+    /// - Returns: the subset of `transactions` that have not been posted.
+    func unpostedTransactions<T: StoreTransactionType>(in transactions: [T]) -> [T]
+
 }
 
 final class PostedTransactionCache: PostedTransactionCacheType {
@@ -29,18 +32,49 @@ final class PostedTransactionCache: PostedTransactionCacheType {
 
     init(deviceCache: DeviceCache) {
         self.deviceCache = deviceCache
+
+        RCIntegrationTestAssert(
+            self.storedTransactions.isEmpty,
+            "Found stored transactions when initializing cache: \(self.storedTransactions)"
+        )
     }
 
     func savePostedTransaction(_ transaction: StoreTransactionType) {
+        RCIntegrationTestAssertNotMainThread()
+
         self.deviceCache.update(key: CacheKey.transactions,
-                                default: Set<String>()) { transactions in
+                                default: StoredTransactions()) { transactions in
             transactions.insert(transaction.transactionIdentifier)
         }
     }
 
     func hasPostedTransaction(_ transaction: StoreTransactionType) -> Bool {
-        let transactions: StoredTransactions = self.deviceCache.value(for: CacheKey.transactions) ?? []
-        return transactions.contains(transaction.transactionIdentifier)
+        RCIntegrationTestAssertNotMainThread()
+
+        return self.storedTransactions.contains(transaction.transactionIdentifier)
+    }
+
+    func unpostedTransactions<T: StoreTransactionType>(in transactions: [T]) -> [T] {
+        RCIntegrationTestAssertNotMainThread()
+
+        return Self.unpostedTransactions(in: transactions, with: self.storedTransactions)
+    }
+
+    // MARK: -
+
+    private var storedTransactions: StoredTransactions {
+        return self.deviceCache.value(for: CacheKey.transactions) ?? []
+    }
+
+}
+
+extension PostedTransactionCacheType {
+
+    static func unpostedTransactions<T: StoreTransactionType>(
+        in transactions: [T],
+        with postedTransactions: Set<String>
+    ) -> [T] {
+        return transactions.filter { !postedTransactions.contains($0.transactionIdentifier) }
     }
 
 }

@@ -32,6 +32,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
     private var customerInfoManager: MockCustomerInfoManager!
     private var paymentQueueWrapper: EitherPaymentQueueWrapper!
     private var backend: MockBackend!
+    private var postedTransactionCache: MockPostedTransactionCache!
     private var offerings: MockOfferingsAPI!
     private var currentUserProvider: MockCurrentUserProvider!
     private var transactionsManager: MockTransactionsManager!
@@ -56,6 +57,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         self.receiptParser = MockReceiptParser()
         self.deviceCache = MockDeviceCache(sandboxEnvironmentDetector: self.systemInfo)
         self.backend = MockBackend()
+        self.postedTransactionCache = .init()
         self.offerings = try XCTUnwrap(self.backend.offerings as? MockOfferingsAPI)
 
         self.mockOfferingsManager = MockOfferingsManager(deviceCache: self.deviceCache,
@@ -192,6 +194,7 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
             productsManager: self.productsManager,
             receiptFetcher: self.receiptFetcher,
             backend: self.backend,
+            cache: self.postedTransactionCache,
             paymentQueueWrapper: self.paymentQueueWrapper,
             systemInfo: self.systemInfo,
             operationDispatcher: self.operationDispatcher
@@ -1014,6 +1017,28 @@ class PurchasesOrchestratorTests: StoreKitConfigTestCase {
         expect(self.backend.invokedPostReceiptData) == true
         expect(self.backend.invokedPostReceiptDataParameters?.transactionData.source.isRestore) == false
         expect(self.backend.invokedPostReceiptDataParameters?.transactionData.source.initiationSource) == .queue
+    }
+
+    @available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *)
+    func testStoreKit2TransactionListenerWithAlreadyPostedTransaction() async throws {
+        try AvailabilityChecks.iOS15APIAvailableOrSkipTest()
+
+        self.setUpStoreKit2Listener()
+
+        let transaction = MockStoreTransaction()
+
+        self.customerInfoManager.stubbedCachedCustomerInfoResult = self.mockCustomerInfo
+        self.postedTransactionCache.savePostedTransaction(transaction)
+        self.backend.stubbedPostReceiptResult = .success(self.mockCustomerInfo)
+
+        try await self.orchestrator.storeKit2TransactionListener(
+            self.mockStoreKit2TransactionListener!,
+            updatedTransaction: transaction
+        )
+
+        expect(transaction.finishInvoked) == true
+        expect(self.backend.invokedPostReceiptData) == false
+        expect(self.customerInfoManager.invokedCacheCustomerInfo) == false
     }
 
     @available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *)

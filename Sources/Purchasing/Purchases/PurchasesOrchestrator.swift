@@ -865,7 +865,7 @@ extension PurchasesOrchestrator: StoreKit2TransactionListenerDelegate {
         let subscriberAttributes = self.unsyncedAttributes
         let adServicesToken = self.attribution.unsyncedAdServicesToken
 
-        let result: Result<CustomerInfo, BackendError> = await Async.call { completed in
+        let result: TransactionPosterResult = await Async.call { completed in
             self.transactionPoster.handlePurchasedTransaction(
                 StoreTransaction.from(transaction: transaction),
                 data: .init(
@@ -1058,7 +1058,7 @@ private extension PurchasesOrchestrator {
                                         source: .init(isRestore: isRestore, initiationSource: initiationSource)
                                       ),
                                       observerMode: self.observerMode) { result in
-                        self.handleReceiptPost(result: result,
+                        self.handleReceiptPost(result: .init(result),
                                                subscriberAttributes: unsyncedAttributes,
                                                adServicesToken: adServicesToken,
                                                completion: completion)
@@ -1068,7 +1068,7 @@ private extension PurchasesOrchestrator {
         }
     }
 
-    func handleReceiptPost(result: Result<CustomerInfo, BackendError>,
+    func handleReceiptPost(result: TransactionPosterResult,
                            subscriberAttributes: SubscriberAttribute.Dictionary,
                            adServicesToken: String?,
                            completion: (@Sendable (Result<CustomerInfo, PurchasesError>) -> Void)?) {
@@ -1080,15 +1080,17 @@ private extension PurchasesOrchestrator {
 
         if let completion = completion {
             self.operationDispatcher.dispatchOnMainThread {
-                completion(result.mapError { $0.asPurchasesError })
+                self.convertToResult(result) { result in
+                    completion(result.mapError { $0.asPurchasesError })
+                }
             }
         }
     }
 
-    func handlePostReceiptResult(_ result: Result<CustomerInfo, BackendError>,
+    func handlePostReceiptResult(_ result: TransactionPosterResult,
                                  subscriberAttributes: SubscriberAttribute.Dictionary,
                                  adServicesToken: String?) {
-        if let customerInfo = result.value {
+        if let customerInfo = result.customerInfo {
             self.customerInfoManager.cache(customerInfo: customerInfo, appUserID: self.appUserID)
         }
 
@@ -1124,7 +1126,8 @@ private extension PurchasesOrchestrator {
             if let completion = self.getAndRemovePurchaseCompletedCallback(forTransaction: purchasedTransaction) {
                 self.operationDispatcher.dispatchOnMainActor {
                     completion(purchasedTransaction,
-                               result.value,
+                               // TODO: !!!
+                               result.customerInfo,
                                result.error?.asPublicError,
                                result.error?.isCancelledError ?? false
                     )
@@ -1200,6 +1203,19 @@ private extension PurchasesOrchestrator {
         }
     }
 
+    func convertToResult(
+        _ transactionResult: TransactionPosterResult,
+        completion: @escaping @Sendable (Result<CustomerInfo, BackendError>) -> Void
+    ) {
+        transactionResult.toResult(completion: completion) {
+            self.customerInfoManager.customerInfo(
+                appUserID: self.appUserID,
+                fetchPolicy: .cachedOrFetched,
+                completion: $0
+            )
+        }
+    }
+
 }
 
 private extension PurchasesOrchestrator {
@@ -1235,7 +1251,7 @@ extension PurchasesOrchestrator {
         let unsyncedAttributes = self.unsyncedAttributes
         let adServicesToken = self.attribution.unsyncedAdServicesToken
 
-        let result = await self.transactionPoster.handlePurchasedTransaction(
+        let postResult = await self.transactionPoster.handlePurchasedTransaction(
             transaction,
             data: .init(
                 appUserID: self.appUserID,
@@ -1248,11 +1264,12 @@ extension PurchasesOrchestrator {
             )
         )
 
-        self.handlePostReceiptResult(result,
+        self.handlePostReceiptResult(postResult,
                                      subscriberAttributes: unsyncedAttributes,
                                      adServicesToken: adServicesToken)
 
-        return try result
+        return try await self
+            .convertToResult(postResult)
             .mapError(\.asPurchasesError)
             .get()
     }
@@ -1265,6 +1282,16 @@ extension PurchasesOrchestrator {
                                isRestore: isRestore,
                                initiationSource: initiationSource,
                                completion: completion)
+        }
+    }
+
+    /// Converts a `TransactionPosterResult` to a `Result<CustomerInfo, BackendError>`
+    /// by optionally loading a customer info for `TransactionPosterResult.alreadyPosted`.
+    private func convertToResult(
+        _ transactionResult: TransactionPosterResult
+    ) async -> Result<CustomerInfo, BackendError> {
+        return await Async.call { completion in
+            self.convertToResult(transactionResult, completion: completion)
         }
     }
 

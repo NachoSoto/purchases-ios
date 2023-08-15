@@ -320,44 +320,79 @@ private extension CustomerInfoManager {
         if #available(iOS 15.0, tvOS 15.0, macOS 12.0, watchOS 8.0, *) {
             _ = Task<Void, Never> {
                 let transactions = await self.transactionFetcher.unfinishedVerifiedTransactions
+                let unpostedTransactions = self.transactionPoster.unpostedTransactions(in: transactions)
 
-                if let transactionToPost = transactions.first {
-                    Logger.debug(
-                        Strings.customerInfo.posting_transactions_in_lieu_of_fetching_customerinfo(transactions)
-                    )
-
-                    let transactionData = PurchasedTransactionData(
-                        appUserID: appUserID,
-                        presentedOfferingID: nil,
-                        unsyncedAttributes: [:],
-                        storefront: await Storefront.currentStorefront,
-                        source: Self.sourceForUnfinishedTransaction
-                    )
-
-                    // Post everything but the first transaction in the background
-                    // in parallel so they can be de-duped
-                    let otherTransactionsToPostInParalel = Array(transactions.dropFirst())
-                    Task.detached(priority: .background) {
-                        await self.postTransactions(otherTransactionsToPostInParalel, transactionData)
-                    }
-
-                    // Return the result of posting the first transaction.
-                    // The posted receipt will include the content of every other transaction
-                    // so we don't need to wait for those.
-                    completion(await self.transactionPoster.handlePurchasedTransaction(
-                        transactionToPost,
-                        data: transactionData
-                    ))
-                } else {
+                guard !unpostedTransactions.isEmpty else {
                     self.requestCustomerInfo(appUserID: appUserID,
                                              isAppBackgrounded: isAppBackgrounded,
                                              completion: completion)
+                    return
                 }
+
+                Logger.debug(
+                    Strings.customerInfo.posting_transactions_in_lieu_of_fetching_customerinfo(
+                        allTransactions: transactions,
+                        unpostedTransactions: unpostedTransactions
+                    )
+                )
+
+                let transactionData = PurchasedTransactionData(
+                    appUserID: appUserID,
+                    presentedOfferingID: nil,
+                    unsyncedAttributes: [:],
+                    storefront: await Storefront.currentStorefront,
+                    source: Self.sourceForUnfinishedTransaction
+                )
+//                let transactionToPost = transactions.first { !$0.cached }
+                
+
+//                whileLoop: while let transaction = transactions.popFirst() {
+//                    let result = await self.transactionPoster.handlePurchasedTransaction(
+//                        transaction,
+//                        data: transactionData
+//                    )
+//
+//                    switch result {
+//                    case let .success(customerInfo):
+//                        completion(.success(customerInfo))
+//                        break whileLoop
+//
+//                    case .alreadyPosted, .failure:
+//                        continue
+//                    }
+//                }
+
+                // If there are leftover transactions
+                // post those in the background in parallel to make sure
+                // they are de-duped
+                Task.detached(priority: .background) { [transactions] in
+                    await self.postTransactions(transactions, transactionData)
+                }
+
+                // If none of the transactions were successfully posted simply request CustomerInfo.
+                return self.requestCustomerInfo(appUserID: appUserID,
+                                                isAppBackgrounded: isAppBackgrounded,
+                                                completion: completion)
             }
         } else {
             return self.requestCustomerInfo(appUserID: appUserID,
                                             isAppBackgrounded: isAppBackgrounded,
                                             completion: completion)
+        }
+    }
+
+    private func cachedOrRequestCustomerInfoFetcher(
+        appUserID: String,
+        isAppBackgrounded: Bool
+    ) -> TransactionPosterResult.CustomerInfoFetcher {
+        return { completion in
+            if let cachedCustomerInfo = self.cachedCustomerInfo(appUserID: appUserID) {
+                completion(.success(cachedCustomerInfo))
+            } else {
+                self.requestCustomerInfo(appUserID: appUserID,
+                                         isAppBackgrounded: isAppBackgrounded,
+                                         completion: completion)
+            }
         }
     }
 
