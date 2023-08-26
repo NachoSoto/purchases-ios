@@ -59,7 +59,8 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
                 transactionID: transaction.transactionIdentifier,
                 productID: package.storeProduct.productIdentifier,
                 transactionDate: transaction.purchaseDate,
-                offeringID: package.offeringIdentifier
+                offeringID: package.offeringIdentifier,
+                paywallMode: nil
             )
         )
     }
@@ -97,7 +98,26 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
                 transactionID: transaction.transactionIdentifier,
                 productID: package.storeProduct.productIdentifier,
                 transactionDate: transaction.purchaseDate,
-                offeringID: package.offeringIdentifier
+                offeringID: package.offeringIdentifier,
+                paywallMode: nil
+            )
+        )
+    }
+
+    func testPurchasingPackageWithPaywallViewMode() async throws {
+        Purchases.shared.cachePresentedPaywallMode(.fullScreen)
+
+        let transaction = try await XCTAsyncUnwrap(try await self.purchaseMonthlyOffering().transaction)
+
+        let package = try await self.monthlyPackage
+
+        self.logger.verifyMessageWasLogged(
+            Strings.purchase.transaction_poster_handling_transaction(
+                transactionID: transaction.transactionIdentifier,
+                productID: package.storeProduct.productIdentifier,
+                transactionDate: transaction.purchaseDate,
+                offeringID: package.offeringIdentifier,
+                paywallMode: .fullScreen
             )
         )
     }
@@ -513,12 +533,15 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
 
         // 5. Re-open app
         await self.resetSingleton()
-        self.logger.clearMessages()
 
-        // 6. Purchase again
+        // 6. Wait for pending transactions to be posted
+        try await self.waitUntilNoUnfinishedTransactions()
+
+        // 7. Purchase again
+        self.logger.clearMessages()
         try await self.purchaseMonthlyProduct()
 
-        // 7. Verify transaction is posted as a purchase.
+        // 8. Verify transaction is posted as a purchase.
         self.logger.verifyMessageWasLogged("Posting receipt (source: 'purchase')")
     }
 

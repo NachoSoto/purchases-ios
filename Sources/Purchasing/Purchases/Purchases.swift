@@ -237,6 +237,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
     private let attributionPoster: AttributionPoster
     private let backend: Backend
     private let deviceCache: DeviceCache
+    private let paywallCache: PaywallCacheWarmingType?
     private let identityManager: IdentityManager
     private let userDefaults: UserDefaults
     private let notificationCenter: NotificationCenter
@@ -417,13 +418,23 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
             }
         }()
 
-        let trialOrIntroPriceChecker = TrialOrIntroPriceEligibilityChecker(systemInfo: systemInfo,
-                                                                           receiptFetcher: receiptFetcher,
-                                                                           introEligibilityCalculator: introCalculator,
-                                                                           backend: backend,
-                                                                           currentUserProvider: identityManager,
-                                                                           operationDispatcher: operationDispatcher,
-                                                                           productsManager: productsManager)
+        let trialOrIntroPriceChecker = CachingTrialOrIntroPriceEligibilityChecker.create(
+            with: TrialOrIntroPriceEligibilityChecker(systemInfo: systemInfo,
+                                                      receiptFetcher: receiptFetcher,
+                                                      introEligibilityCalculator: introCalculator,
+                                                      backend: backend,
+                                                      currentUserProvider: identityManager,
+                                                      operationDispatcher: operationDispatcher,
+                                                      productsManager: productsManager)
+        )
+
+        let paywallCache: PaywallCacheWarmingType?
+
+        if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *) {
+            paywallCache = PaywallCacheWarming(introEligibiltyChecker: trialOrIntroPriceChecker)
+        } else {
+            paywallCache = nil
+        }
 
         self.init(appUserID: appUserID,
                   requestFetcher: fetcher,
@@ -437,6 +448,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
                   systemInfo: systemInfo,
                   offeringsFactory: offeringsFactory,
                   deviceCache: deviceCache,
+                  paywallCache: paywallCache,
                   identityManager: identityManager,
                   subscriberAttributes: subscriberAttributes,
                   operationDispatcher: operationDispatcher,
@@ -448,6 +460,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
                   purchasedProductsFetcher: purchasedProductsFetcher,
                   trialOrIntroPriceEligibilityChecker: trialOrIntroPriceChecker)
     }
+
     // swiftlint:disable:next function_body_length
     init(appUserID: String?,
          requestFetcher: StoreKitRequestFetcher,
@@ -461,6 +474,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
          systemInfo: SystemInfo,
          offeringsFactory: OfferingsFactory,
          deviceCache: DeviceCache,
+         paywallCache: PaywallCacheWarmingType?,
          identityManager: IdentityManager,
          subscriberAttributes: Attribution,
          operationDispatcher: OperationDispatcher,
@@ -470,7 +484,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
          offlineEntitlementsManager: OfflineEntitlementsManager,
          purchasesOrchestrator: PurchasesOrchestrator,
          purchasedProductsFetcher: PurchasedProductsFetcherType?,
-         trialOrIntroPriceEligibilityChecker: TrialOrIntroPriceEligibilityCheckerType
+         trialOrIntroPriceEligibilityChecker: CachingTrialOrIntroPriceEligibilityChecker
     ) {
 
         if systemInfo.dangerousSettings.customEntitlementComputation {
@@ -504,6 +518,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
         self.paymentQueueWrapper = paymentQueueWrapper
         self.offeringsFactory = offeringsFactory
         self.deviceCache = deviceCache
+        self.paywallCache = paywallCache
         self.identityManager = identityManager
         self.userDefaults = userDefaults
         self.notificationCenter = notificationCenter
@@ -516,7 +531,7 @@ public typealias StartPurchaseBlock = (@escaping PurchaseCompletedBlock) -> Void
         self.offlineEntitlementsManager = offlineEntitlementsManager
         self.purchasesOrchestrator = purchasesOrchestrator
         self.purchasedProductsFetcher = purchasedProductsFetcher
-        self.trialOrIntroPriceEligibilityChecker = .create(with: trialOrIntroPriceEligibilityChecker)
+        self.trialOrIntroPriceEligibilityChecker = trialOrIntroPriceEligibilityChecker
 
         super.init()
 
@@ -670,9 +685,7 @@ public extension Purchases {
             }
 
             self.systemInfo.isApplicationBackgrounded { isAppBackgrounded in
-                self.offeringsManager.updateOfferingsCache(appUserID: self.appUserID,
-                                                           isAppBackgrounded: isAppBackgrounded,
-                                                           completion: nil)
+                self.updateOfferingsCache(isAppBackgrounded: isAppBackgrounded)
             }
         }
     }
@@ -893,6 +906,18 @@ public extension Purchases {
         return await checkTrialOrIntroductoryDiscountEligibilityAsync(productIdentifiers)
     }
 
+    @available(iOS 13.0, tvOS 13.0, macOS 10.15, watchOS 6.2, *)
+    func checkTrialOrIntroDiscountEligibility(packages: [Package]) async -> [Package: IntroEligibility] {
+        let result = await self.checkTrialOrIntroDiscountEligibility(
+            productIdentifiers: packages.map(\.storeProduct.productIdentifier)
+        )
+
+        return Set(packages)
+            .dictionaryWithValues { (package: Package) in
+                result[package.storeProduct.productIdentifier] ?? .init(eligibilityStatus: .unknown)
+            }
+    }
+
     @objc(checkTrialOrIntroDiscountEligibilityForProduct:completion:)
     func checkTrialOrIntroDiscountEligibility(product: StoreProduct,
                                               completion: @escaping (IntroEligibilityStatus) -> Void) {
@@ -1001,6 +1026,12 @@ public extension Purchases {
     }
 
 #endif
+
+    /// Used by the `RevenueCatUI` framework to keep track of what ``PaywallViewMode``
+    /// was used during a purchase.
+    func cachePresentedPaywallMode(_ mode: PaywallViewMode) {
+        self.purchasesOrchestrator.cachePresentedPaywallMode(mode)
+    }
 
 }
 
@@ -1598,9 +1629,18 @@ private extension Purchases {
     }
 
     private func updateOfferingsCache(isAppBackgrounded: Bool) {
-        self.offeringsManager.updateOfferingsCache(appUserID: self.appUserID,
-                                                   isAppBackgrounded: isAppBackgrounded,
-                                                   completion: nil)
+        self.offeringsManager.updateOfferingsCache(
+            appUserID: self.appUserID,
+            isAppBackgrounded: isAppBackgrounded
+        ) { [cache = self.paywallCache] offerings in
+            if #available(iOS 15.0, macOS 12.0, watchOS 8.0, tvOS 15.0, *),
+               let cache = cache, let offerings = offerings.value {
+                self.operationDispatcher.dispatchOnWorkerThread {
+                    await cache.warmUpEligibilityCache(offerings: offerings)
+                    await cache.warmUpPaywallImagesCache(offerings: offerings)
+                }
+            }
+        }
     }
 
 }
