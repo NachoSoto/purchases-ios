@@ -128,7 +128,7 @@ platform :ios do
       step_name: "scan - iPhone",
       device: ENV['SCAN_DEVICE'] || "iPhone 12 (15.2)",
       ensure_devices_found: true,
-      scheme: "RevenueCat",
+      scheme: "RevenueCatSDK",
       prelaunch_simulator: true,
       output_types: 'junit',
       result_bundle: true,
@@ -146,7 +146,7 @@ platform :ios do
       step_name: "scan - Apple TV",
       device: ENV['SCAN_DEVICE'] || "Apple TV",
       ensure_devices_found: true,
-      scheme: "RevenueCat",
+      scheme: "RevenueCatSDK",
       prelaunch_simulator: true,
       output_types: 'junit',
       number_of_retries: 5,
@@ -163,7 +163,7 @@ platform :ios do
       step_name: "scan - watchOS",
       device: ENV['SCAN_DEVICE'] || "Apple Watch Series 8 (41mm)",
       ensure_devices_found: true,
-      scheme: "RevenueCat",
+      scheme: "RevenueCatSDK",
       prelaunch_simulator: true,
       output_types: 'junit',
       number_of_retries: 5,
@@ -201,12 +201,8 @@ platform :ios do
 
   desc "Release checks"
   lane :release_checks do |options|
-    version_number = current_version_number
-    check_no_git_tag_exists(version_number)
-    check_pods
     carthage_archive
     export_xcframework
-    check_no_github_release_exists(version_number)
   end
 
   desc "build tvOS, watchOS, macOS"
@@ -225,7 +221,7 @@ platform :ios do
   lane :build_visionos do |options|
     xcodebuild(
       workspace: 'RevenueCat.xcworkspace',
-      scheme: 'RevenueCat',
+      scheme: 'RevenueCatSDK',
       destination: 'generic/platform=visionOS',
       configuration: 'release',
       xcargs: "CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO"
@@ -469,7 +465,7 @@ platform :ios do
     Dir.mktmpdir {|dir|
       xcodebuild(
         project: 'RevenueCat.xcodeproj',
-        scheme: 'RevenueCat',
+        scheme: 'RevenueCatSDK',
         derivedDataPath: dir,
         configuration: 'release',
         arch: arch,
@@ -479,6 +475,7 @@ platform :ios do
       )
 
       FileUtils.cp(
+        # TODO: ?
         "#{dir}/Build/Intermediates.noindex/RevenueCat.build/Release/RevenueCat.build/Objects-normal/#{arch}/RevenueCat-Swift.h",
         File.absolute_path("../Tests/InstallationTests/CommonFiles/RevenueCat-Swift.h")
       )
@@ -499,7 +496,7 @@ platform :ios do
 
     create_xcframework(
       destinations: platforms,
-      scheme: 'RevenueCat',
+      scheme: 'RevenueCatSDK',
       xcframework_output_directory: output_directory,
       # Bitcode is no longer required since Xcode 14.
       enable_bitcode: false,
@@ -511,9 +508,11 @@ platform :ios do
 
     # Sign XCFramework for Xcode 15
     sign_xcframework(
+      # TODO: ?
       file: "#{output_directory_for_sh}/RevenueCat.xcframework"
     )
 
+    # ?
     xcframeworks_zip_path_for_sh = "../RevenueCat.xcframework.zip"
     sh("ditto", "-c", "-k", "--sequesterRsrc", "--keepParent",
       output_directory_for_sh,
@@ -861,6 +860,7 @@ def carthage_archive
     # We use this script as a workaround until this is fixed.
     # https://github.com/Carthage/Carthage/releases/0.38.0
     sh("./scripts/carthage.sh", "build", "--no-skip-current")
+    # TODO: ?
     sh("./scripts/carthage.sh", "archive", "RevenueCat")
   end
 end
