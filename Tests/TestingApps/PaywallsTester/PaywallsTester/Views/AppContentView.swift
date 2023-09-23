@@ -104,7 +104,7 @@ struct AppContentView: View {
                 }
             }
         }
-        #if DEBUG && !os(watchOS)
+        #if DEBUG && !os(watchOS) && !os(tvOS)
         .overlay {
             if #available(iOS 16.0, macOS 13.0, *) {
                 DebugView()

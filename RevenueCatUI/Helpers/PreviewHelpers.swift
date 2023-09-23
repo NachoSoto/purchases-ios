@@ -41,7 +41,6 @@ enum PreviewHelpers {
 /// ```
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 @available(macOS, unavailable)
-@available(tvOS, unavailable)
 struct PreviewableTemplate<T: TemplateViewType>: View {
 
     typealias Creator = @Sendable @MainActor (TemplateViewConfiguration) -> T
@@ -103,6 +102,16 @@ struct PreviewableTemplate<T: TemplateViewType>: View {
                     await self.introEligibilityViewModel.computeEligibility(
                         for: configuration.packages
                     )
+                }
+                .background {
+                    // Background to simulate paywall displayed on top of an app
+                    #if os(tvOS)
+                    if #available(tvOS 16.0, *) {
+                        Rectangle()
+                            .foregroundStyle(Color.gray.gradient)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                    #endif
                 }
                 .previewDisplayName("\(configuration.mode)")
                 .previewLayout(configuration.mode.layout)

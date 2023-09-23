@@ -36,7 +36,6 @@ import SwiftUI
 
 /// A `SwiftUI` view that can display a paywall with `TemplateViewConfiguration`.
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-@available(tvOS, unavailable)
 protocol TemplateViewType: SwiftUI.View {
 
     var configuration: TemplateViewConfiguration { get }
@@ -71,7 +70,6 @@ private extension PaywallTemplate {
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-@available(tvOS, unavailable)
 extension PaywallData {
 
     @ViewBuilder
@@ -156,6 +154,7 @@ extension View {
 
     func adaptTemplateView(with configuration: TemplateViewConfiguration) -> some View {
         self
+            .adjustPadding()
             .background(configuration.backgroundView)
             .adjustColorScheme(with: configuration)
     }
@@ -169,6 +168,14 @@ extension View {
             // and other SwiftUI elements from automatically taking a dark appearance.
             self.environment(\.colorScheme, .light)
         }
+    }
+
+    private func adjustPadding() -> some View {
+        #if os(tvOS)
+        self.padding(.horizontal, 400)
+        #else
+        self
+        #endif
     }
 
 }

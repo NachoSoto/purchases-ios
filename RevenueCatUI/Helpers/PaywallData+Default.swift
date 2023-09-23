@@ -108,9 +108,8 @@ private extension PaywallData {
 
 #if DEBUG
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, macOS 13.0, tvOS 15.0, watchOS 9.0, *)
 @available(macOS, unavailable)
-@available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct DefaultPaywall_Previews: PreviewProvider {
 

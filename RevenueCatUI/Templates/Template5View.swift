@@ -15,7 +15,6 @@ import RevenueCat
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-@available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct Template5View: TemplateViewType {
 
@@ -274,7 +273,6 @@ struct Template5View: TemplateViewType {
 // MARK: - Extensions
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-@available(tvOS, unavailable)
 @available(watchOS, unavailable)
 private extension Template5View {
 
@@ -300,9 +298,8 @@ private extension PaywallViewMode {
 
 #if DEBUG
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, macOS 13.0, tvOS 15.0, watchOS 9.0, *)
 @available(macOS, unavailable)
-@available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct Template5View_Previews: PreviewProvider {
 
