@@ -90,19 +90,11 @@ extension PaywallData {
                                   fonts: fonts,
                                   locale: locale) {
         case let .success(configuration):
-            let view = Self.createView(template: template, configuration: configuration)
+            Self.createView(template: template, configuration: configuration)
+                .adaptTemplateView(with: configuration)
                 .task(id: offering) {
                     await introEligibility.computeEligibility(for: configuration.packages)
                 }
-                .background(configuration.backgroundView)
-
-            if configuration.hasDarkMode {
-                view
-            } else {
-                // If paywall has no dark mode configured, prevent materials
-                // and other SwiftUI elements from automatically taking a dark appearance.
-                view.environment(\.colorScheme, .light)
-            }
 
         case let .failure(error):
             DebugErrorView(error, releaseBehavior: .emptyView)
@@ -155,6 +147,28 @@ extension PaywallData {
             Template5View(configuration)
         }
         #endif
+    }
+
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+extension View {
+
+    func adaptTemplateView(with configuration: TemplateViewConfiguration) -> some View {
+        self
+            .background(configuration.backgroundView)
+            .adjustColorScheme(with: configuration)
+    }
+
+    @ViewBuilder
+    private func adjustColorScheme(with configuration: TemplateViewConfiguration) -> some View {
+        if configuration.hasDarkMode {
+            self
+        } else {
+            // If paywall has no dark mode configured, prevent materials
+            // and other SwiftUI elements from automatically taking a dark appearance.
+            self.environment(\.colorScheme, .light)
+        }
     }
 
 }
