@@ -13,7 +13,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 enum Constants {
 
     static let defaultAnimation: Animation = .easeInOut(duration: 0.2)
@@ -52,7 +52,7 @@ enum Constants {
 
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 extension Constants {
 
     static var checkmarkImage: some View {
@@ -61,7 +61,7 @@ extension Constants {
 
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 extension TemplateViewType {
 
     var defaultHorizontalPaddingLength: CGFloat? {

@@ -16,7 +16,9 @@ import SwiftUI
 
 // swiftlint:disable file_length
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct Template4View: TemplateViewType {
 
     let configuration: TemplateViewConfiguration
@@ -223,7 +225,9 @@ struct Template4View: TemplateViewType {
 
 // MARK: - Views
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 private struct PackageButton: View {
 
     var configuration: TemplateViewConfiguration
@@ -383,7 +387,7 @@ private struct PackageButton: View {
 
 // MARK: - Extensions
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private extension PaywallViewMode {
 
     var shouldDisplayPackages: Bool {
@@ -399,9 +403,10 @@ private extension PaywallViewMode {
 
 #if DEBUG
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, *)
-@available(watchOS, unavailable)
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 @available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct Template4View_Previews: PreviewProvider {
 
     static var previews: some View {
