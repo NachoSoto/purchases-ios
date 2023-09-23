@@ -265,7 +265,7 @@ private extension SamplePaywallLoader {
                 offerDetailsWithIntroOffer: "{{ total_price_and_per_month }} after {{ sub_offer_duration }} trial",
                 offerName: "{{ sub_period }}"
             ),
-            assetBaseURL: Self.paywallAssetBaseURL
+            assetBaseURL: Bundle.main.bundleURL
         )
     }
 
@@ -319,13 +319,20 @@ private extension SamplePaywallLoader {
     }
 
     static func template4() -> PaywallData {
+        // TODO: remove
+        #if os(watchOS)
+        let backgroundImage = "background.jpg"
+        #else
+        let backgroundImage = "300883_1690710097.jpg"
+        #endif
+
         return .init(
             templateName: PaywallTemplate.template4.rawValue,
             config: .init(
                 packages: Array<PackageType>([.monthly, .sixMonth, .annual])
                     .map { Package.string(from: $0)! },
                 defaultPackage: Package.string(from: .sixMonth)!,
-                images: .init(background: "300883_1690710097.jpg"),
+                images: .init(background: backgroundImage),
                 colors: .init(
                     light: .init(
                         background: "#FFFFFF",
@@ -434,12 +441,12 @@ private extension SamplePaywallLoader {
 
     static let images: PaywallData.Configuration.Images = .init(
         header: "9a17e0a7_1689854430..jpeg",
-        background: "9a17e0a7_1689854342..jpg",
+        background: "background.jpg",
         icon: "9a17e0a7_1689854430..jpeg"
     )
 
     static let offeringIdentifier = "offering"
-    static let paywallAssetBaseURL = URL(string: "https://assets.pawwalls.com")!
+    static let paywallAssetBaseURL = Bundle.module.bundleURL
     static let tosURL = URL(string: "https://revenuecat.com/tos")!
 
 }

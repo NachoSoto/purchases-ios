@@ -77,7 +77,7 @@ struct PurchaseButton: View {
                 mode: self.mode
             )
         }
-        .font(self.fonts.font(for: self.mode.buttonFont).weight(.semibold))
+        .font(self.fonts.font(for: self.fontStyle).weight(self.fontWeight))
         .background(self.backgroundView)
         .tint(.clear)
         .frame(maxWidth: .infinity)
@@ -107,6 +107,27 @@ struct PurchaseButton: View {
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+private extension PurchaseButton {
+
+    private var fontStyle: Font.TextStyle {
+        #if os(watchOS)
+        return .caption
+        #else
+        return .title3
+        #endif
+    }
+
+    private var fontWeight: Font.Weight {
+        #if os(watchOS)
+        return .medium
+        #else
+        return .semibold
+        #endif
+    }
+
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private struct PurchaseButtonLabel: View {
 
     let package: TemplateViewConfiguration.Package
@@ -127,12 +148,10 @@ private struct PurchaseButtonLabel: View {
             introEligibility: self.introEligibility,
             foregroundColor: self.colors.callToActionForegroundColor
         )
-            .frame(
-                maxWidth: self.mode.fullWidthButton
-                   ? .infinity
-                    : nil
-            )
+            .frame(maxWidth: .infinity)
+            #if !os(watchOS)
             .padding()
+            #endif
             .hidden(if: !self.isEnabled)
             .overlay {
                 if !self.isEnabled && self.isNotRedacted {
@@ -141,23 +160,6 @@ private struct PurchaseButtonLabel: View {
                         .tint(self.colors.callToActionForegroundColor)
                 }
             }
-    }
-
-}
-
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-private extension PaywallViewMode {
-
-    var buttonFont: Font.TextStyle {
-        switch self {
-        case .fullScreen, .footer, .condensedFooter: return .title3
-        }
-    }
-
-    var fullWidthButton: Bool {
-        switch self {
-        case .fullScreen, .footer, .condensedFooter: return true
-        }
     }
 
 }

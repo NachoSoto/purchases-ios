@@ -21,6 +21,7 @@
 		4FCA01FB2A3A1CBD00B262C0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FCA01FA2A3A1CBD00B262C0 /* StoreKit.framework */; };
 		4FDF11202A7270F3004F3680 /* SamplePaywallsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDF111F2A7270F3004F3680 /* SamplePaywallsList.swift */; };
 		4FDF11222A72714C004F3680 /* SamplePaywalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDF11212A72714C004F3680 /* SamplePaywalls.swift */; };
+		57FC3F672ABF5CAB0041C09F /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 57FC3F662ABF5CAB0041C09F /* background.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,6 +60,7 @@
 		4FDF111F2A7270F3004F3680 /* SamplePaywallsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePaywallsList.swift; sourceTree = "<group>"; };
 		4FDF11212A72714C004F3680 /* SamplePaywalls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplePaywalls.swift; sourceTree = "<group>"; };
 		4FFD2A602AA154B4001F4B0C /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		57FC3F662ABF5CAB0041C09F /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				4F34FF642A60ADBD00AADF11 /* Configuration.swift */,
 				4FDF11212A72714C004F3680 /* SamplePaywalls.swift */,
 				4FC882E02A5870C6005BE85E /* Info.plist */,
+				57FC3F662ABF5CAB0041C09F /* background.jpg */,
 				4FC046BF2A572E3700A28BCF /* Assets.xcassets */,
 				4FC046BD2A572E3700A28BCF /* PaywallsTester.entitlements */,
 				4FC046BE2A572E3700A28BCF /* Products.storekit */,
@@ -214,6 +217,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57FC3F672ABF5CAB0041C09F /* background.jpg in Resources */,
 				4F217A102A6DB6FB000B092D /* Assets.xcassets in Resources */,
 				4F4557E22A6FFE6A00160521 /* Localizable.strings in Resources */,
 			);

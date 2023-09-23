@@ -61,7 +61,6 @@ private extension UIDevice {
         case .phone: return .phone
         case .pad: return .pad
         case .mac: return .mac
-        case .watch: return .watch
 
         case .tv: return .unknown
         case .carPlay: return .unknown

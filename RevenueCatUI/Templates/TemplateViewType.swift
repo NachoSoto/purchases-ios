@@ -140,7 +140,7 @@ extension PaywallData {
     private static func createView(template: PaywallTemplate,
                                    configuration: TemplateViewConfiguration) -> some View {
         #if os(watchOS)
-        Text("Watch paywall")
+        WatchTemplateView(configuration)
         #else
         switch template {
         case .template1:
@@ -167,6 +167,8 @@ extension TemplateViewConfiguration {
         switch self.mode {
         case .fullScreen:
             self.backgroundContent
+
+        #if !os(watchOS)
         case .footer, .condensedFooter:
             self.backgroundContent
             #if canImport(UIKit)
@@ -176,6 +178,7 @@ extension TemplateViewConfiguration {
                     edgesIgnoringSafeArea: .all
                 )
             #endif
+        #endif
         }
     }
 
@@ -189,8 +192,8 @@ extension TemplateViewConfiguration {
             if #available(watchOS 10.0, *) {
                 view.foregroundStyle(.thinMaterial)
             } else {
-                // TODO: watchOS 8?
-                view
+                // TODO: ?
+                view.foregroundStyle(self.colors.backgroundColor)
             }
             #else
             // Blur background if there is a background image.

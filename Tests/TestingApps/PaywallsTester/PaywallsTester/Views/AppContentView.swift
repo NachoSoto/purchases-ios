@@ -31,18 +31,18 @@ struct AppContentView: View {
 
     var body: some View {
         TabView {
-            if self.isPurchasesConfigured {
-                NavigationView {
-                    ZStack {
-                        self.background
-                        self.content
-                    }
-                    .navigationTitle("Paywall Tester")
-                }
-                .tabItem {
-                    Label("App", systemImage: "iphone")
-                }
-            }
+//            if self.isPurchasesConfigured {
+//                NavigationView {
+//                    ZStack {
+//                        self.background
+//                        self.content
+//                    }
+//                    .navigationTitle("Paywall Tester")
+//                }
+//                .tabItem {
+//                    Label("App", systemImage: "iphone")
+//                }
+//            }
 
             #if DEBUG
             SamplePaywallsList()

@@ -80,17 +80,37 @@ private extension IntroEligibilityStateView {
 
 }
 
+// MARK: -
+
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private extension View {
 
     func withPendingData(_ pending: Bool, alignment: Alignment) -> some View {
-        self
-            .hidden(if: pending)
+        self.modifier(PendingDataModifier(pending: pending,
+                                          alignment: alignment))
+    }
+
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+private struct PendingDataModifier: ViewModifier {
+
+    @Environment(\.redactionReasons.isEmpty)
+    private var isNotRedacted: Bool
+
+    var pending: Bool
+    var alignment: Alignment
+
+    func body(content: Content) -> some View {
+        let displayProgressView = self.pending && self.isNotRedacted
+
+        return content
+            .hidden(if: displayProgressView)
             .overlay {
-                if pending {
+                if displayProgressView {
                     ProgressView()
                         .progressViewStyle(.circular)
-                        .frame(maxWidth: .infinity, alignment: alignment)
+                        .frame(maxWidth: .infinity, alignment: self.alignment)
                 }
             }
             .transition(.opacity.animation(Constants.defaultAnimation))

@@ -487,13 +487,14 @@ internal enum TestData {
         features: []
     )
     static let paywallHeaderImageName = "9a17e0a7_1689854430..jpeg"
-    static let paywallBackgroundImageName = "9a17e0a7_1689854342..jpg"
+    static let paywallBackgroundImageName = "background.jpg"
     static let images: PaywallData.Configuration.Images = .init(
         header: Self.paywallHeaderImageName,
         background: Self.paywallBackgroundImageName,
         icon: Self.paywallHeaderImageName
     )
-    static let paywallAssetBaseURL = URL(string: "https://assets.pawwalls.com")!
+    static let paywallAssetBaseURL = Bundle.module.bundleURL
+//    static let paywallAssetBaseURL = URL(string: "https://assets.pawwalls.com")!
 
     private static let offeringIdentifier = "offering"
 

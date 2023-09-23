@@ -10,8 +10,6 @@ let environmentVariables = ProcessInfo.processInfo.environment
 let shouldIncludeDocCPlugin = environmentVariables["INCLUDE_DOCC_PLUGIN"] == "true"
 
 var dependencies: [Package.Dependency] = [
-    .package(url: "git@github.com:Quick/Nimble.git", from: "10.0.0"),
-    .package(url: "git@github.com:pointfreeco/swift-snapshot-testing.git", from: "1.11.0")
 ]
 if shouldIncludeDocCPlugin {
     dependencies.append(.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"))
@@ -64,7 +62,7 @@ let package = Package(
         .target(name: "ReceiptParser",
                 path: "LocalReceiptParsing"),
         .testTarget(name: "ReceiptParserTests",
-                    dependencies: ["ReceiptParser", "Nimble"],
+                    dependencies: ["ReceiptParser"],
                     exclude: ["ReceiptParserTests-Info.plist"]),
         // RevenueCatUI
         .target(name: "RevenueCatUI",
@@ -77,8 +75,6 @@ let package = Package(
         .testTarget(name: "RevenueCatUITests",
                     dependencies: [
                         "RevenueCatUI",
-                        "Nimble",
-                        .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
                     ],
                     exclude: ["Templates/__Snapshots__", "Data/__Snapshots__", "TestPlans"],
                     resources: [.copy("Resources/header.jpg"), .copy("Resources/background.jpg")])

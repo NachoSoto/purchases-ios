@@ -303,6 +303,7 @@ private extension PaywallViewMode {
 
 }
 
+// TODO: extract to use on watch template
 #if canImport(UIKit)
 private extension Bundle {
 
