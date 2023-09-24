@@ -24,7 +24,7 @@ struct SamplePaywallsList: View {
             .sheet(item: self.$display) { display in
                 NavigationView {
                     self.view(for: display)
-                        #if targetEnvironment(macCatalyst)
+                        #if targetEnvironment(macCatalyst) || os(xrOS)
                         .toolbar {
                             ToolbarItem(placement: .destructiveAction) {
                                 Button {

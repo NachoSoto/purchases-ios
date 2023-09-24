@@ -265,7 +265,7 @@ private extension SamplePaywallLoader {
                 offerDetailsWithIntroOffer: "{{ total_price_and_per_month }} after {{ sub_offer_duration }} trial",
                 offerName: "{{ sub_period }}"
             ),
-            assetBaseURL: Bundle.main.bundleURL
+            assetBaseURL: Self.paywallAssetBaseURL
         )
     }
 
@@ -441,12 +441,12 @@ private extension SamplePaywallLoader {
 
     static let images: PaywallData.Configuration.Images = .init(
         header: "9a17e0a7_1689854430..jpeg",
-        background: "background.jpg",
+        background: "300883_1690710097.jpg",
         icon: "9a17e0a7_1689854430..jpeg"
     )
 
     static let offeringIdentifier = "offering"
-    static let paywallAssetBaseURL = Bundle.module.bundleURL
+    static let paywallAssetBaseURL = URL(string: "https://assets.pawwalls.com")!
     static let tosURL = URL(string: "https://revenuecat.com/tos")!
 
 }

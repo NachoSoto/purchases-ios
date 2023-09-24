@@ -176,8 +176,8 @@ struct Template4View: TemplateViewType {
                 }
             }
         }
-        .onChange(of: self.dynamicTypeSize) { _ in self.packageContentHeight = nil }
-        .onChange(of: self.containerWidth) { _ in self.packageContentHeight = nil }
+        .onChange(of: self.dynamicTypeSize) { _, _ in self.packageContentHeight = nil }
+        .onChange(of: self.containerWidth) { _, _ in self.packageContentHeight = nil }
         .hidden()
     }
 

@@ -11,7 +11,7 @@ enum Configuration {
 
     // Note: you can leave this empty to use the production server, or point to your own instance.
     static let proxyURL = ""
-    static let apiKey = "test"
+    static let apiKey = "appl_TFIZqBlauHeMhnqfNlWWFBjZwkf"
 
     static let entitlement = "pro"
 
